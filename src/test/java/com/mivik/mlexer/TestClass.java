@@ -11,11 +11,8 @@ public class TestClass {
 	}
 
 	private static void printState() {
-		for (int i = 1; i <= lexer.DS[0]; i++) {
-			if (i == lexer.DS[0]) t = lexer.length();
-			else t = lexer.DS[i + 1];
+		for (int i = 1; i <= lexer.DS[0]; i++)
 			System.out.println(lexer.getTypeName(lexer.D[i]) + ":" + lexer.getTrimmedPartText(i));
-		}
 		System.out.println("============");
 	}
 
