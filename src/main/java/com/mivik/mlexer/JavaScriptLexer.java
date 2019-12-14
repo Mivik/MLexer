@@ -22,19 +22,21 @@ public class JavaScriptLexer extends JavaLexer {
 		if (c == '\'') {
 			// JS的世界里没有char
 			boolean z = false;
+			char cur;
 			do {
-				if (P == L) return TYPE_STRING;
-				if (S[P] == '\n') return TYPE_STRING;
-				if (S[P] == '\\')
+				if (S.eof()) return TYPE_STRING;
+				cur = S.get();
+				if (cur == '\n') return TYPE_STRING;
+				if (cur == '\\')
 					z = !z;
-				else if (S[P] == '\'' && !z) {
-					++P;
+				else if (cur == '\'' && !z) {
+					S.moveRight();
 					return TYPE_STRING;
 				} else if (z) z = false;
-				++P;
+				S.moveRight();
 			} while (true);
 		}
-		if (c == '=' && S[P] == '>') // =>
+		if (c == '=' && S.get() == '>') // =>
 			return TYPE_OPERATOR;
 		return super.processSymbol(c);
 	}

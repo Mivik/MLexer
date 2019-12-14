@@ -11,11 +11,10 @@ public abstract class MLexer {
 			TYPE_PREPROCESSOR_COMMAND = 18, TYPE_TAG_START = 19, TYPE_TAG_END = 20, TYPE_CONTENT_START = 21, TYPE_CONTENT = 22, TYPE_CDATA = 23,
 			FAILED = -1, EOF = -2;
 
-	public char[] S;
-	public int P, ST;
+	public StringProvider S;
+	public int ST;
 	public byte[] D = new byte[EXPAND_SIZE + 1];
 	public int[] DS = new int[EXPAND_SIZE + 1];
-	public int L;
 	private boolean _AutoParse = true;
 	private boolean _Parsed = false;
 
@@ -41,40 +40,35 @@ public abstract class MLexer {
 
 	public final void copyFrom(MLexer a) {
 		this.S = a.S;
-		this.P = a.P;
 		this.ST = a.ST;
 		this.D = a.D;
 		this.DS = a.DS;
-		this.L = a.L;
 	}
 
 	public final void readString(char type) {
 		boolean z = false;
 		do {
-			if (S[P] == '\n') return;
-			if (P == L) return;
-			if (S[P] == '\\')
+			char c = S.get();
+			if (c == '\n') return;
+			if (S.eof()) return;
+			if (c == '\\')
 				z = !z;
-			else if (S[P] == type && !z) {
-				++P;
+			else if (c == type && !z) {
+				S.moveRight();
 				return;
 			} else if (z) z = false;
-			++P;
+			S.moveRight();
 		} while (true);
 	}
 
-	public final void setTextLength(int len) {
-		this.L = len;
-	}
-
 	protected final void ReadSpaces() {
-		while (P != L && isWhitespace(S[P])) ++P;
+		while ((!S.eof()) && isWhitespace(S.get())) S.moveRight();
 	}
 
 	// 传入的是修改前光标的位置
 	public final void onInsertChars(int pos, int len) {
 		if (len == 0) return;
-		if (L - len == 0) {
+		if (S.length() - len == 0) {
 			parseAll();
 			return;
 		}
@@ -84,7 +78,7 @@ public abstract class MLexer {
 			for (int i = 1; i <= DS[0]; i++) DS[i] += len;
 			return;
 		}
-		this.P = Math.min(DS[part], pos);
+		S.moveCursor(Math.min(DS[part], pos));
 //		int en = DE[part] + len;
 		int afterLen = Math.max(DS[0] - part, 0);
 		byte[] afterD = new byte[afterLen];
@@ -104,12 +98,12 @@ public abstract class MLexer {
 				expandDArray();
 			D[DS[0]] = type;
 			DS[DS[0]] = ST;
-			if (P == L) return;
+			if (S.eof()) return;
 			if (i != afterLen) if (ST == afterDS[i] && type == afterD[i]) break;
-			if (i != afterLen && P >= afterDS[i]) {
+			if (i != afterLen && S.getCursor() >= afterDS[i]) {
 				do {
 					i++;
-				} while (i != afterLen && P >= afterDS[i]);
+				} while (i != afterLen && S.getCursor() >= afterDS[i]);
 				if (i != afterLen) i--;
 			}
 		}
@@ -134,7 +128,7 @@ public abstract class MLexer {
 			for (int i = 1; i <= DS[0]; i++) DS[i] -= len;
 			return;
 		}
-		this.P = Math.min(DS[part1], pos);
+		S.moveCursor(Math.min(DS[part1], pos));
 		int afterLen = Math.max(DS[0] - part2, 0);
 		byte[] afterD = new byte[afterLen];
 		int[] afterDS = new int[afterLen];
@@ -153,12 +147,12 @@ public abstract class MLexer {
 				expandDArray();
 			D[DS[0]] = type;
 			DS[DS[0]] = ST;
-			if (P == L) return;
+			if (S.eof()) return;
 			if (i != afterLen) if (ST == afterDS[i] && type == afterD[i]) break;
-			if (i != afterLen && P >= afterDS[i]) {
+			if (i != afterLen && S.getCursor() >= afterDS[i]) {
 				do {
 					i++;
-				} while (i != afterLen && P >= afterDS[i]);
+				} while (i != afterLen && S.getCursor() >= afterDS[i]);
 				if (i != afterLen) i--;
 			}
 		}
@@ -173,22 +167,17 @@ public abstract class MLexer {
 	}
 
 	public final void setText(char[] cs) {
-		setText(cs, cs.length);
+		setText(new SimpleStringProvider(cs));
 	}
 
-	public final void setText(char[] cs, int len) {
-		onTextReferenceUpdate(cs, len);
+	public final void setText(StringProvider s) {
+		this.S = s;
+		onTextReferenceUpdate();
 		_Parsed = false;
 		if (_AutoParse) parseAll();
 	}
 
-	public final void onTextReferenceUpdate(char[] cs) {
-		onTextReferenceUpdate(cs, cs.length);
-	}
-
-	public final void onTextReferenceUpdate(char[] cs, int len) {
-		this.S = cs;
-		this.L = len;
+	public final void onTextReferenceUpdate() {
 		_Parsed = false;
 	}
 
@@ -206,16 +195,12 @@ public abstract class MLexer {
 		return r;
 	}
 
-	public final String getPartText() {
-		return new String(S);
-	}
-
 	public final char[] getChars() {
-		return S;
+		return S.toString().toCharArray();
 	}
 
 	public final String getPartText(int st, int en) {
-		return new String(S, st, en - st);
+		return S.substring(st, en);
 	}
 
 	public final char[] getChars(int st, int en) {
@@ -225,7 +210,8 @@ public abstract class MLexer {
 	}
 
 	public final void clearCache() {
-		this.P = this.DS[0] = 0;
+		S.moveCursor(0);
+		this.DS[0] = 0;
 	}
 
 	private void expandDArray() {
@@ -242,7 +228,8 @@ public abstract class MLexer {
 
 	public void parseAll() {
 		if (_Parsed) return;
-		this.P = this.DS[0] = 0;
+		S.moveCursor(0);
+		this.DS[0] = 0;
 		if (S == null) return;
 		byte type;
 		while ((type = getNext()) != EOF) {
@@ -251,7 +238,7 @@ public abstract class MLexer {
 			DS[DS[0]] = ST;
 		}
 		if (DS[0] + 1 == D.length) expandDArray();
-		DS[DS[0] + 1] = L;
+		DS[DS[0] + 1] = S.length();
 		_Parsed = true;
 	}
 
@@ -265,19 +252,26 @@ public abstract class MLexer {
 		}
 	}
 
+	public int length() {
+		return S.length();
+	}
+
 	protected final boolean equals(int st, int en, String s) {
 		if (en - st != s.length()) return false;
-		for (int i = st; i < en; i++)
-			if (S[i] != s.charAt(i - st)) return false;
+		int ori = S.getCursor();
+		S.moveCursor(st);
+		for (int i = st; i < en; i++, S.moveRight())
+			if (S.get() != s.charAt(i - st)) return false;
+		S.moveCursor(ori);
 		return true;
 	}
 
 	public final String getLastString() {
-		return new String(S, ST, P - ST);
+		return S.substring(ST, S.getCursor());
 	}
 
 	public int getPartEnd(int part) {
-		return part >= DS[0] ? L : DS[part + 1];
+		return part >= DS[0] ? S.length() : DS[part + 1];
 	}
 
 	public int getPartLength(int part) {
@@ -285,20 +279,23 @@ public abstract class MLexer {
 	}
 
 	public String getPartText(int part) {
-		return new String(S, DS[part], getPartLength(part));
+		return S.substring(DS[part], DS[part] + getPartLength(part));
 	}
 
 	public String getTrimmedPartText(int part) {
 		return getPartText(part).trim();
 	}
 
-	public final boolean isStartOfLine(int pos) {
-		if (--pos < 0) return true;
-		while (pos >= 0) {
-			if (S[pos] == '\n') return true;
-			if (!isWhitespace(S[pos])) return false;
-			pos--;
+	public final boolean isStartOfLine() {
+		int ori = S.getCursor();
+		if (ori == 0) return true;
+		S.moveLeft();
+		while (S.getCursor() >= 0) {
+			if (S.get() == '\n') return true;
+			if (!isWhitespace(S.get())) return false;
+			S.moveLeft();
 		}
+		S.moveCursor(ori);
 		return true;
 	}
 
@@ -348,15 +345,29 @@ public abstract class MLexer {
 			return t;
 		}
 
-		public boolean hasWord(char[] cs, int st, int en) {
-			byte c;
+		public boolean hasWord(StringProvider s, int st, int en) {
+			int c;
 			int cur = 0;
-			for (int i = st; i < en; i++) {
-				if (cs[i] < 'a' || cs[i] > 'z') return false;
-				c = (byte) (cs[i] - 'a');
-				if (c < 0 || c >= 26) return false;
-				if ((cur = C[cur][c]) == 0) return false;
+			int ori = s.getCursor();
+			s.moveCursor(st);
+			for (int i = st; i < en; i++, s.moveRight()) {
+				char w = s.get();
+				if (w < 'a' || w > 'z') {
+					s.moveCursor(ori);
+					return false;
+				}
+				c = w - 'a';
+				if (c < 0 || c >= 26) {
+					s.moveCursor(ori);
+					return false;
+				}
+				if ((cur = C[cur][c]) == 0) {
+					s.moveCursor(ori);
+					return false;
+				}
+				;
 			}
+			s.moveCursor(ori);
 			return L[cur];
 		}
 

@@ -18,7 +18,7 @@ public class CLexer extends CommonLexer {
 
 	@Override
 	protected byte getWordType(int st, int en) {
-		if (isKeyword(S, st, P)) return TYPE_KEYWORD;
+		if (isKeyword(S, st, en)) return TYPE_KEYWORD;
 		// No bool in C!!!!
 		return TYPE_IDENTIFIER;
 	}
@@ -40,10 +40,11 @@ public class CLexer extends CommonLexer {
 
 	@Override
 	public byte specialJudge() {
-		if (S[P] == '#' && isStartOfLine(P)) {
+		char c=S.get();
+		if (c == '#' && isStartOfLine()) {
 			do {
-				++P;
-			} while (P != L && S[P] != '\n');
+				S.moveRight();
+			} while ((!S.eof()) && S.get() != '\n');
 			return TYPE_PREPROCESSOR_COMMAND;
 		}
 		return super.specialJudge();

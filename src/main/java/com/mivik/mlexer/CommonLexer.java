@@ -5,24 +5,26 @@ public abstract class CommonLexer extends MLexer {
 	}
 
 	protected byte getNext() {
-		if (P == L) return EOF;
-		ST = P;
-		if (isWhitespace(S[P])) ReadSpaces();
-		if (P == L) return EOF;
-		if (isIdentifierStart(S[P])) {
-			int st = P;
+		if (S.eof()) return EOF;
+		ST = S.getCursor();
+		if (isWhitespace(S.get())) ReadSpaces();
+		if (S.eof()) return EOF;
+		if (isIdentifierStart(S.get())) {
+			int st = S.getCursor();
 			ReadIdentifier();
-			return getWordType(st, P);
+			return getWordType(st, S.getCursor());
 		}
 		byte type = specialJudge();
 		if (type != FAILED) return type;
-		return processSymbol(S[P++]);
+		char c = S.get();
+		S.moveRight();
+		return processSymbol(c);
 	}
 
 	protected void ReadIdentifier() {
 		do {
-			++P;
-		} while (P != L && isIdentifierPart(S[P]));
+			S.moveRight();
+		} while ((!S.eof()) && isIdentifierPart(S.get()));
 	}
 
 	// Overrideable
@@ -34,14 +36,23 @@ public abstract class CommonLexer extends MLexer {
 	// 当MLexer读到非空格非标志符时会调用此函数
 	// 如果函数返回TYPE_FAILED，MLexer将会把当前内容作为符号自动处理（processSymbol）
 	public byte specialJudge() {
-		if (Character.isDigit(S[P]) || S[P] == '.' || S[P] == '-' || S[P] == '+') {
+		char c = S.get();
+		if (Character.isDigit(c) || c == '.' || c == '-' || c == '+') {
 			boolean hex = false;
+			char cur = c;
 			do {
-				if (++P == L) break;
-				if (S[P] == 'x' && S[P - 1] == '0' && P - 1 == ST) hex = true;
-			} while (Character.isDigit(S[P]) || S[P] == '.' || (S[P] == 'e' && P != ST && S[P - 1] != '.') || (hex && Character.isLetter(S[P])) || ((S[P] == '-' || S[P] == '+') && S[P - 1] == 'e'));
-			if (P != L && P == ST + 1) {
-				switch (S[ST]) {
+				c = cur;
+				S.moveRight();
+				cur = S.get();
+				if (S.eof()) break;
+				if (cur == 'x' && c == '0' && S.getCursor() - 1 == ST) hex = true;
+			} while (Character.isDigit(cur) || cur == '.' || (cur == 'e' && (!S.eof()) && c != '.') || (hex && Character.isLetter(cur)) || ((cur == '-' || cur == '+') && c == 'e'));
+			if ((!S.eof()) && S.getCursor() == ST + 1) {
+				int ori = S.getCursor();
+				S.moveCursor(ST);
+				char cc = S.get();
+				S.moveCursor(ori);
+				switch (cc) {
 					case '.':
 						return TYPE_PERIOD;
 					case '+':
@@ -49,85 +60,80 @@ public abstract class CommonLexer extends MLexer {
 						return TYPE_OPERATOR;
 				}
 			}
-			if (P != L)
-				switch (S[P]) {
+			if (!S.eof())
+				switch (S.get()) {
 					case 'l':
 					case 'L':
 					case 'd':
 					case 'D':
 					case 'f':
 					case 'F':
-						++P;
+						S.moveRight();
 				}
 			return TYPE_NUMBER;
 		}
 		return FAILED;
 	}
 
-	public final boolean isKeyword(char[] cs, int st, int en) {
-		return getKeywordTrie().hasWord(cs, st, en);
+	public final boolean isKeyword(StringProvider s, int st, int en) {
+		return getKeywordTrie().hasWord(s, st, en);
 	}
 
 	public byte processSymbol(char c) {
 		switch (c) {
-			// 有 ## 或者 #= 用法的运算符
+			// 有 # 或者 ## 或者 #= 用法的运算符
 			case '|':
 			case '&':
 			case '+':
 			case '-': {
-				if (P == L) return TYPE_OPERATOR;
-				if (S[P] == S[P - 1] || S[P] == '=') {
-					++P;
+				if (S.eof()) return TYPE_OPERATOR;
+				char cur = S.get();
+				if (cur == c || cur == '=') {
+					S.moveRight();
 					return TYPE_OPERATOR;
 				}
 				return TYPE_OPERATOR;
 			}
 			// 有 # 或者 #= 用法的运算符
+			case '^':
+			case '%':
+			case '*':
 			case '!': {
-				if (P == L) return TYPE_OPERATOR;
-				if (S[P] == '=')
-					++P;
+				if (S.eof()) return TYPE_OPERATOR;
+				if (S.get() == '=') S.moveRight();
 				return TYPE_OPERATOR;
 			}
 			// 有 # 或者 #= 或者 ## 或者 ##= 用法的运算符
 			case '>':
 			case '<': {
-				if (P == L) return TYPE_OPERATOR;
-				if (S[P] == c) {
-					if (++P == L) return TYPE_OPERATOR;
-					if (S[P] == '=') {
-						++P;
+				if (S.eof()) return TYPE_OPERATOR;
+				if (S.get() == c) {
+					S.moveRight();
+					if (S.eof()) return TYPE_OPERATOR;
+					if (S.get() == '=') {
+						S.moveRight();
 						return TYPE_OPERATOR;
 					}
-				} else if (S[P] == '=') ++P;
+				} else if (S.get() == '=') S.moveRight();
 				return TYPE_OPERATOR;
 			}
 			// 只有 # 用法的运算符
 			case '~':
 			case '?':
 				return TYPE_OPERATOR;
-			// 只有 #= 用法的运算符
-			case '^':
-			case '%':
-			case '*': {
-				if (P == L) return TYPE_OPERATOR;
-				if (S[P] == '=') {
-					++P;
-					return TYPE_OPERATOR;
-				}
-				return TYPE_OPERATOR;
-			}
 			case '/': {
-				if (P == L) return TYPE_OPERATOR;
-				switch (S[P]) {
+				if (S.eof()) return TYPE_OPERATOR;
+				switch (S.get()) {
 					case '*': {
 						boolean star = false;
 						do {
-							if (++P == L) return TYPE_COMMENT;
-							if (S[P] == '*') star = true;
+							S.moveRight();
+							if (S.eof()) return TYPE_COMMENT;
+							char cur = S.get();
+							if (cur == '*') star = true;
 							else {
-								if (S[P] == '/' && star) {
-									++P;
+								if (cur == '/' && star) {
+									S.moveRight();
 									return TYPE_COMMENT;
 								}
 								star = false;
@@ -136,12 +142,12 @@ public abstract class CommonLexer extends MLexer {
 					}
 					case '/': {
 						do {
-							++P;
-						} while (P != L && S[P] != '\n');
+							S.moveRight();
+						} while ((!S.eof()) && S.get() != '\n');
 						return TYPE_COMMENT;
 					}
 					case '=':
-						++P;
+						S.moveRight();
 						return TYPE_OPERATOR;
 					default:
 						return TYPE_OPERATOR;
@@ -158,9 +164,9 @@ public abstract class CommonLexer extends MLexer {
 				return TYPE_CHAR;
 			}
 			case '=': {
-				if (P == L) return TYPE_ASSIGNMENT;
-				if (S[P] == '=') {
-					++P;
+				if (S.eof()) return TYPE_ASSIGNMENT;
+				if (S.get() == '=') {
+					S.moveRight();
 					return TYPE_OPERATOR;
 				}
 				return TYPE_ASSIGNMENT;

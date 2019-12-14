@@ -32,7 +32,7 @@ public class JavaLexer extends CommonLexer {
 	@Override
 	protected byte getWordType(int st, int en) {
 		if (isKeyword(S, st, en)) return TYPE_KEYWORD;
-		else if (equals(st, en, "true") || equals(st, P, "false")) return TYPE_BOOLEAN;
+		else if (equals(st, en, "true") || equals(st, en, "false")) return TYPE_BOOLEAN;
 		else if (equals(st, en, "null")) return TYPE_NULL;
 		return TYPE_IDENTIFIER;
 	}
@@ -46,18 +46,23 @@ public class JavaLexer extends CommonLexer {
 	public byte processSymbol(char c) {
 		// 我大Java的 >>> 和 >>>=
 		if (c == '>') {
-			if (P == L) return TYPE_OPERATOR;
-			if (S[P] == c) {
-				if (++P == L) return TYPE_OPERATOR; // >>
-				if (S[P] == '=') ++P; // >>=
-				else if (S[P] == '>') {
-					if (++P == L) return TYPE_OPERATOR; // >>>
-					if (S[P] == '=') { // >>>=
-						++P;
+			if (S.eof()) return TYPE_OPERATOR;
+			char cur = S.get();
+			if (cur == c) {
+				S.moveRight();
+				if (S.eof()) return TYPE_OPERATOR; // >>
+				c = cur;
+				cur = S.get();
+				if (cur == '=') S.moveRight(); // >>=
+				else if (cur == '>') {
+					S.moveRight();
+					if (S.eof()) return TYPE_OPERATOR; // >>>
+					if (S.get() == '=') { // >>>=
+						S.moveRight();
 						return TYPE_OPERATOR;
 					}
 				}
-			} else if (S[P] == '=') ++P; // >=
+			} else if (cur == '=') S.moveRight(); // >=
 			return TYPE_OPERATOR;
 		}
 		return super.processSymbol(c);

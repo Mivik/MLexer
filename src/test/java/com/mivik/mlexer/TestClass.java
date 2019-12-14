@@ -13,7 +13,7 @@ public class TestClass {
 	private static void printState() {
 		int t;
 		for (int i = 1; i <= lexer.DS[0]; i++) {
-			if (i == lexer.DS[0]) t = lexer.L;
+			if (i == lexer.DS[0]) t = lexer.length();
 			else t = lexer.DS[i + 1];
 			System.out.println(lexer.getTypeName(lexer.D[i]) + ":" + lexer.getTrimmedPartText(i));
 		}
@@ -30,7 +30,7 @@ public class TestClass {
 		cs = null;
 		ns = null;
 		System.gc();
-		lexer.onTextReferenceUpdate(S, S.length);
+		lexer.onTextReferenceUpdate();
 		lexer.onInsertChars(i, s.length());
 	}
 
@@ -42,7 +42,7 @@ public class TestClass {
 		S = ns;
 		ns = null;
 		System.gc();
-		lexer.onTextReferenceUpdate(S, S.length);
+		lexer.onTextReferenceUpdate();
 		lexer.onDeleteChars(i, len);
 	}
 }

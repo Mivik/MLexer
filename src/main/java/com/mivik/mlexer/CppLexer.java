@@ -16,7 +16,7 @@ public class CppLexer extends CLexer {
 
 	@Override
 	protected byte getWordType(int st, int en) {
-		if (equals(st, en, "true") || equals(st, P, "false")) return TYPE_BOOLEAN;
+		if (equals(st, en, "true") || equals(st,en, "false")) return TYPE_BOOLEAN;
 		return super.getWordType(st, en);
 	}
 

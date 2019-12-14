@@ -3,7 +3,7 @@ package com.mivik.mlexer;
 public class JSONLexer extends JavaScriptLexer {
 	@Override
 	protected byte getWordType(int st, int en) {
-		if (equals(st, en, "true") || equals(st, P, "false")) return TYPE_BOOLEAN;
+		if (equals(st, en, "true") || equals(st, en, "false")) return TYPE_BOOLEAN;
 		return TYPE_IDENTIFIER;
 	}
 

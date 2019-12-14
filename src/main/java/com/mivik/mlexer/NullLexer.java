@@ -3,8 +3,8 @@ package com.mivik.mlexer;
 public class NullLexer extends MLexer {
 	@Override
 	protected byte getNext() {
-		if (P == L) return EOF;
-		P = L;
+		if (S.eof()) return EOF;
+		S.moveCursor(S.length());
 		return TYPE_PURE;
 	}
 
