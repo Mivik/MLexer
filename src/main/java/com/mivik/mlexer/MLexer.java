@@ -48,9 +48,9 @@ public abstract class MLexer {
 	public final void readString(char type) {
 		boolean z = false;
 		do {
+			if (S.eof()) return;
 			char c = S.get();
 			if (c == '\n') return;
-			if (S.eof()) return;
 			if (c == '\\')
 				z = !z;
 			else if (c == type && !z) {
@@ -110,13 +110,14 @@ public abstract class MLexer {
 		if (afterLen != 0) {
 			int cplen = afterLen - i;
 			int nl = DS[0] + cplen - 1;
-			while (D.length < nl) expandDArray();
+			while (D.length <= nl) expandDArray();
 			System.arraycopy(afterD, i, D, DS[0], cplen);
 			System.arraycopy(afterDS, i, DS, DS[0], cplen);
 			DS[0] = nl;
 		}
 	}
 
+	// 传入的是删除前的坐标
 	public final void onDeleteChars(int pos, int len) {
 		if (len > pos) len = pos;
 		int part2 = findPart(pos);
@@ -261,7 +262,10 @@ public abstract class MLexer {
 		int ori = S.getCursor();
 		S.moveCursor(st);
 		for (int i = st; i < en; i++, S.moveRight())
-			if (S.get() != s.charAt(i - st)) return false;
+			if (S.get() != s.charAt(i - st)) {
+				S.moveCursor(ori);
+				return false;
+			}
 		S.moveCursor(ori);
 		return true;
 	}
@@ -291,8 +295,14 @@ public abstract class MLexer {
 		if (ori == 0) return true;
 		S.moveLeft();
 		while (S.getCursor() >= 0) {
-			if (S.get() == '\n') return true;
-			if (!isWhitespace(S.get())) return false;
+			if (S.get() == '\n') {
+				S.moveCursor(ori);
+				return true;
+			}
+			if (!isWhitespace(S.get())) {
+				S.moveCursor(ori);
+				return false;
+			}
 			S.moveLeft();
 		}
 		S.moveCursor(ori);

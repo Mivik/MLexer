@@ -1,13 +1,29 @@
 package com.mivik.mlexer;
 
+import java.util.Random;
+
 public class TestClass {
 	private static char[] S = ("{'json':'good','qwe':123}").toCharArray();
 	private static MLexer lexer;
 
 	public static void main(String[] args) {
+		benchmark();
+	}
+
+	private static void benchmark() {
+		final int count = 100;
+		long st = System.currentTimeMillis();
+		Random random = new Random();
 		lexer = new JSONLexer();
 		lexer.setText(S);
-		printState();
+		for (int i = 0; i < count; i++) {
+			int ind = random.nextInt(S.length + 1);
+			if (random.nextInt(8) == 0) insertString(ind, "\n");
+			else insertString(ind, "" + ((char) (random.nextInt(95) + 32)));
+		}
+		st = System.currentTimeMillis() - st;
+		System.out.println("插入" + count + "次耗时: " + st + "ms");
+		System.out.println("平均单次插入耗时: " + ((double) st / count) + "ms");
 	}
 
 	private static void printState() {

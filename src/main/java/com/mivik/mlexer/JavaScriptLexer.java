@@ -36,7 +36,7 @@ public class JavaScriptLexer extends JavaLexer {
 				S.moveRight();
 			} while (true);
 		}
-		if (c == '=' && S.get() == '>') // =>
+		if ((!S.eof()) && c == '=' && S.get() == '>') // =>
 			return TYPE_OPERATOR;
 		return super.processSymbol(c);
 	}

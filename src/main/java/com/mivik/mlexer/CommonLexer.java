@@ -43,8 +43,8 @@ public abstract class CommonLexer extends MLexer {
 			do {
 				c = cur;
 				S.moveRight();
-				cur = S.get();
 				if (S.eof()) break;
+				cur = S.get();
 				if (cur == 'x' && c == '0' && S.getCursor() - 1 == ST) hex = true;
 			} while (Character.isDigit(cur) || cur == '.' || (cur == 'e' && (!S.eof()) && c != '.') || (hex && Character.isLetter(cur)) || ((cur == '-' || cur == '+') && c == 'e'));
 			if ((!S.eof()) && S.getCursor() == ST + 1) {
