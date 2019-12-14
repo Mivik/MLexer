@@ -3,7 +3,7 @@ package com.mivik.mlexer;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 
-public abstract class BaseLexer {
+public abstract class MLexer {
 	public static final int EXPAND_SIZE = 128;
 	public static final int TOTAL_COUNT = 24;
 	public static final byte TYPE_IDENTIFIER = 0, TYPE_KEYWORD = 1, TYPE_NUMBER = 2, TYPE_COMMENT = 3, TYPE_STRING = 4, TYPE_CHAR = 5, TYPE_OPERATOR = 6, TYPE_BOOLEAN = 7, TYPE_ASSIGNMENT = 8,
@@ -19,7 +19,7 @@ public abstract class BaseLexer {
 	private boolean _AutoParse = true;
 	private boolean _Parsed = false;
 
-	public BaseLexer() {
+	public MLexer() {
 	}
 
 	public final void setAutoParse(boolean flag) {
@@ -39,7 +39,7 @@ public abstract class BaseLexer {
 		if (!_Parsed) parseAll();
 	}
 
-	public final void copyFrom(BaseLexer a) {
+	public final void copyFrom(MLexer a) {
 		this.S = a.S;
 		this.P = a.P;
 		this.ST = a.ST;

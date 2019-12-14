@@ -1,6 +1,6 @@
 package com.mivik.mlexer;
 
-public abstract class CommonLexer extends BaseLexer {
+public abstract class CommonLexer extends MLexer {
 	public CommonLexer() {
 	}
 

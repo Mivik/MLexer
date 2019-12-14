@@ -2,7 +2,7 @@ package com.mivik.mlexer;
 
 public class TestClass {
 	private static char[] S = ("{'json':'good','qwe':123}").toCharArray();
-	private static BaseLexer lexer;
+	private static MLexer lexer;
 
 	public static void main(String[] args) {
 		lexer = new JSONLexer();

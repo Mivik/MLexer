@@ -1,6 +1,6 @@
 package com.mivik.mlexer;
 
-public class NullLexer extends BaseLexer {
+public class NullLexer extends MLexer {
 	@Override
 	protected byte getNext() {
 		if (P == L) return EOF;
