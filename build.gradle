@@ -1,5 +1,5 @@
 plugins {
-    id 'java'
+	id 'java'
 }
 
 group 'com.mivik'
@@ -8,9 +8,8 @@ version '1.0.0'
 sourceCompatibility = 1.8
 
 repositories {
-    mavenCentral()
+	mavenCentral()
 }
 
 dependencies {
-    testCompile group: 'junit', name: 'junit', version: '4.12'
 }

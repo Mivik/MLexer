@@ -11,7 +11,6 @@ public class TestClass {
 	}
 
 	private static void printState() {
-		int t;
 		for (int i = 1; i <= lexer.DS[0]; i++) {
 			if (i == lexer.DS[0]) t = lexer.length();
 			else t = lexer.DS[i + 1];
@@ -27,8 +26,6 @@ public class TestClass {
 		System.arraycopy(cs, 0, ns, i, cs.length);
 		System.arraycopy(S, i, ns, i + cs.length, S.length - i);
 		S = ns;
-		cs = null;
-		ns = null;
 		System.gc();
 		lexer.onTextReferenceUpdate();
 		lexer.onInsertChars(i, s.length());
@@ -40,7 +37,6 @@ public class TestClass {
 		System.arraycopy(S, 0, ns, 0, i - len);
 		System.arraycopy(S, i, ns, i - len, S.length - i);
 		S = ns;
-		ns = null;
 		System.gc();
 		lexer.onTextReferenceUpdate();
 		lexer.onDeleteChars(i, len);
