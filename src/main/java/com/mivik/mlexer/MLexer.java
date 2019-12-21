@@ -11,7 +11,7 @@ public abstract class MLexer {
 			TYPE_PREPROCESSOR_COMMAND = 18, TYPE_TAG_START = 19, TYPE_TAG_END = 20, TYPE_CONTENT_START = 21, TYPE_CONTENT = 22, TYPE_CDATA = 23,
 			FAILED = -1, EOF = -2;
 
-	public StringProvider S;
+	public DocumentAccessor S;
 	public int ST;
 	public byte[] D = new byte[EXPAND_SIZE + 1];
 	public int[] DS = new int[EXPAND_SIZE + 1];
@@ -172,7 +172,7 @@ public abstract class MLexer {
 	}
 
 	public final void setText(StringProvider s) {
-		this.S = s;
+		this.S = s.getAccessor();
 		onTextReferenceUpdate();
 		_Parsed = false;
 		if (_AutoParse) parseAll();
@@ -206,7 +206,7 @@ public abstract class MLexer {
 
 	public final char[] getChars(int st, int en) {
 		char[] ret = new char[en - st];
-		System.arraycopy(S, st, ret, 0, ret.length);
+		S.getChars(st, en - st, ret, 0);
 		return ret;
 	}
 
@@ -219,11 +219,9 @@ public abstract class MLexer {
 		byte[] nd = new byte[D.length + EXPAND_SIZE];
 		System.arraycopy(D, 0, nd, 0, D.length);
 		D = nd;
-		nd = null;
 		int[] nd2 = new int[D.length];
 		System.arraycopy(DS, 0, nd2, 0, DS.length);
 		DS = nd2;
-		nd2 = null;
 		System.gc();
 	}
 
@@ -310,11 +308,11 @@ public abstract class MLexer {
 	}
 
 	public final String getStateString() {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder builder = new StringBuilder();
 		for (int i = 1; i <= DS[0]; i++)
-			buffer.append(getTypeName(D[i])).append(':').append(DS[i]).append('\n');
-		if (buffer.length() != 0) buffer.deleteCharAt(buffer.length() - 1);
-		return buffer.toString();
+			builder.append(getTypeName(D[i])).append(':').append(DS[i]).append('\n');
+		if (builder.length() != 0) builder.deleteCharAt(builder.length() - 1);
+		return builder.toString();
 	}
 
 	public final String[] queryKeywords(char[] cs, int st, int en) {
@@ -355,29 +353,18 @@ public abstract class MLexer {
 			return t;
 		}
 
-		public boolean hasWord(StringProvider s, int st, int en) {
+		public boolean hasWord(DocumentAccessor ori, int st, int en) {
 			int c;
 			int cur = 0;
-			int ori = s.getCursor();
+			DocumentAccessor s = ori.clone();
 			s.moveCursor(st);
 			for (int i = st; i < en; i++, s.moveRight()) {
 				char w = s.get();
-				if (w < 'a' || w > 'z') {
-					s.moveCursor(ori);
-					return false;
-				}
+				if (w < 'a' || w > 'z') return false;
 				c = w - 'a';
-				if (c < 0 || c >= 26) {
-					s.moveCursor(ori);
-					return false;
-				}
-				if ((cur = C[cur][c]) == 0) {
-					s.moveCursor(ori);
-					return false;
-				}
-				;
+				if (c < 0 || c >= 26) return false;
+				if ((cur = C[cur][c]) == 0) return false;
 			}
-			s.moveCursor(ori);
 			return L[cur];
 		}
 

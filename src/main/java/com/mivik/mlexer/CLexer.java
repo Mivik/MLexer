@@ -40,7 +40,7 @@ public class CLexer extends CommonLexer {
 
 	@Override
 	public byte specialJudge() {
-		char c=S.get();
+		char c = S.get();
 		if (c == '#' && isStartOfLine()) {
 			do {
 				S.moveRight();

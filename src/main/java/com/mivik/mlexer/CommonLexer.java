@@ -1,5 +1,7 @@
 package com.mivik.mlexer;
 
+import javax.swing.text.Document;
+
 public abstract class CommonLexer extends MLexer {
 	public CommonLexer() {
 	}
@@ -75,7 +77,7 @@ public abstract class CommonLexer extends MLexer {
 		return FAILED;
 	}
 
-	public final boolean isKeyword(StringProvider s, int st, int en) {
+	public final boolean isKeyword(DocumentAccessor s, int st, int en) {
 		return getKeywordTrie().hasWord(s, st, en);
 	}
 
