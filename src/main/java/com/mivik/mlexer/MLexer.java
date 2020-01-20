@@ -111,7 +111,7 @@ public abstract class MLexer {
 		if (afterLen != 0) {
 			int cpLen = afterLen - i;
 			int nl = DS[0] + cpLen - 1;
-			while (D.length <= nl) expandDArray();
+			while (D.length <= nl + 1) expandDArray();
 			System.arraycopy(afterD, i, D, DS[0], cpLen);
 			System.arraycopy(afterDS, i, DS, DS[0], cpLen);
 			DS[0] = nl;
@@ -161,7 +161,7 @@ public abstract class MLexer {
 		if (afterLen != 0) {
 			int cpLen = afterLen - i;
 			int nl = DS[0] + cpLen - 1;
-			while (D.length < nl) expandDArray();
+			while (D.length <= nl + 1) expandDArray();
 			System.arraycopy(afterD, i, D, DS[0], cpLen);
 			System.arraycopy(afterDS, i, DS, DS[0], cpLen);
 			DS[0] = nl;
