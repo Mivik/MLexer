@@ -19,7 +19,7 @@ public class TestClass {
 	}
 
 	private static void benchmark() {
-		final int count = 100;
+		final int count = 1000;
 		long st = System.currentTimeMillis();
 		Random random = new Random();
 		lexer = new JSONLexer();
