@@ -1,5 +1,5 @@
 package com.mivik.mlexer;
 
-public interface StringProvider {
+public interface Document {
 	DocumentAccessor getAccessor();
 }

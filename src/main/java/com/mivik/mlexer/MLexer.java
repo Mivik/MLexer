@@ -11,8 +11,9 @@ public abstract class MLexer {
 			TYPE_PREPROCESSOR_COMMAND = 18, TYPE_TAG_START = 19, TYPE_TAG_END = 20, TYPE_CONTENT_START = 21, TYPE_CONTENT = 22, TYPE_CDATA = 23,
 			FAILED = -1, EOF = -2;
 
-	public DocumentAccessor S;
-	public int ST;
+	private Document P;
+	private DocumentAccessor S;
+	private int ST;
 	public byte[] D = new byte[EXPAND_SIZE + 1];
 	public int[] DS = new int[EXPAND_SIZE + 1];
 	private boolean _AutoParse = true;
@@ -171,14 +172,18 @@ public abstract class MLexer {
 		setText(new SimpleStringProvider(cs));
 	}
 
-	public final void setText(StringProvider s) {
+	public final void setText(Document s) {
 		this.S = s.getAccessor();
 		onTextReferenceUpdate();
 		if (_AutoParse) parseAll();
 		else _Parsed = false;
 	}
 
-	public final StringProvider getText() {
+	public final Document getStringProvider() {
+		return this.P;
+	}
+
+	public final DocumentAccessor getDocumentAccessor() {
 		return this.S;
 	}
 
