@@ -3,11 +3,19 @@ package com.mivik.mlexer;
 import java.util.Random;
 
 public class TestClass {
-	private static char[] S = ("{'json':'good','qwe':123}").toCharArray();
+	private static char[] S = ("public class test{}").toCharArray();
 	private static MLexer lexer;
 
 	public static void main(String[] args) {
-		benchmark();
+		lexer = new JavaLexer();
+		lexer.setText(S);
+		printState();
+		deleteString(1, 1);
+		printState();
+		insertString(0, "/*");
+		printState();
+		deleteString(2, 2);
+		printState();
 	}
 
 	private static void benchmark() {
@@ -39,7 +47,7 @@ public class TestClass {
 		System.arraycopy(cs, 0, ns, i, cs.length);
 		System.arraycopy(S, i, ns, i + cs.length, S.length - i);
 		S = ns;
-		System.gc();
+		((SimpleStringProvider) lexer.getText()).setText(S);
 		lexer.onTextReferenceUpdate();
 		lexer.onInsertChars(i, s.length());
 	}
@@ -50,7 +58,7 @@ public class TestClass {
 		System.arraycopy(S, 0, ns, 0, i - len);
 		System.arraycopy(S, i, ns, i - len, S.length - i);
 		S = ns;
-		System.gc();
+		((SimpleStringProvider) lexer.getText()).setText(S);
 		lexer.onTextReferenceUpdate();
 		lexer.onDeleteChars(i, len);
 	}

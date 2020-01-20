@@ -19,11 +19,17 @@ public class SimpleStringProvider extends StringProvider {
 		this(cs, 0, cs.length);
 	}
 
-	public SimpleStringProvider(char[] cs, int off) {
-		this(cs, off, cs.length - off);
+	public SimpleStringProvider(char[] cs, int off, int len) {
+		this.cs = cs;
+		this.ind = this.off = off;
+		this.len = len;
 	}
 
-	public SimpleStringProvider(char[] cs, int off, int len) {
+	public void setText(char[] cs) {
+		setText(cs, 0, cs.length);
+	}
+
+	public void setText(char[] cs, int off, int len) {
 		this.cs = cs;
 		this.ind = this.off = off;
 		this.len = len;
@@ -62,5 +68,10 @@ public class SimpleStringProvider extends StringProvider {
 	@Override
 	public int length() {
 		return len;
+	}
+
+	@Override
+	public String toString() {
+		return new String(cs, off, len);
 	}
 }
