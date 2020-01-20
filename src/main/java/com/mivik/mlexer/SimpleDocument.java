@@ -1,6 +1,6 @@
 package com.mivik.mlexer;
 
-public class SimpleStringProvider implements Document {
+public class SimpleDocument implements Document {
 	private char[] cs;
 	private int off, len;
 
@@ -10,15 +10,15 @@ public class SimpleStringProvider implements Document {
 		return ret;
 	}
 
-	public SimpleStringProvider(CharSequence s) {
+	public SimpleDocument(CharSequence s) {
 		this(CharSequence2CharArray(s), 0, s.length());
 	}
 
-	public SimpleStringProvider(char[] cs) {
+	public SimpleDocument(char[] cs) {
 		this(cs, 0, cs.length);
 	}
 
-	public SimpleStringProvider(char[] cs, int off, int len) {
+	public SimpleDocument(char[] cs, int off, int len) {
 		this.cs = cs;
 		this.off = off;
 		this.len = len;
