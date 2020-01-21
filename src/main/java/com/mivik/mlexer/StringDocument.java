@@ -1,6 +1,6 @@
 package com.mivik.mlexer;
 
-public class SimpleDocument implements Document {
+public class StringDocument implements Document {
 	private char[] cs;
 	private int off, len;
 
@@ -10,15 +10,15 @@ public class SimpleDocument implements Document {
 		return ret;
 	}
 
-	public SimpleDocument(CharSequence s) {
+	public StringDocument(CharSequence s) {
 		this(CharSequence2CharArray(s), 0, s.length());
 	}
 
-	public SimpleDocument(char[] cs) {
+	public StringDocument(char[] cs) {
 		this(cs, 0, cs.length);
 	}
 
-	public SimpleDocument(char[] cs, int off, int len) {
+	public StringDocument(char[] cs, int off, int len) {
 		this.cs = cs;
 		this.off = off;
 		this.len = len;
@@ -61,13 +61,38 @@ public class SimpleDocument implements Document {
 		}
 
 		@Override
-		public void moveLeft() {
-			--ind;
+		public boolean moveForward() {
+			if (ind == len - 1) return false;
+			++ind;
+			return true;
 		}
 
 		@Override
-		public void moveRight() {
-			++ind;
+		public boolean moveBack() {
+			if (ind == 0) return false;
+			--ind;
+			return true;
+		}
+
+		@Override
+		public int moveForward(int x) {
+			if (ind + x >= len) {
+				ind = len - 1;
+				return len - ind - 1;
+			}
+			ind += x;
+			return x;
+		}
+
+		@Override
+		public int moveBack(int x) {
+			if (x > ind) {
+				x = ind;
+				ind = 0;
+				return x;
+			}
+			ind -= x;
+			return x;
 		}
 
 		@Override

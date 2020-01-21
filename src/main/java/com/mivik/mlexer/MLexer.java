@@ -55,15 +55,15 @@ public abstract class MLexer {
 			if (c == '\\')
 				z = !z;
 			else if (c == type && !z) {
-				S.moveRight();
+				S.moveForward();
 				return;
 			} else if (z) z = false;
-			S.moveRight();
+			S.moveForward();
 		} while (true);
 	}
 
 	protected final void ReadSpaces() {
-		while ((!S.eof()) && isWhitespace(S.get())) S.moveRight();
+		while ((!S.eof()) && isWhitespace(S.get())) S.moveForward();
 	}
 
 	// 传入的是修改前光标的位置
@@ -169,7 +169,7 @@ public abstract class MLexer {
 	}
 
 	public final void setText(char[] cs) {
-		setText(new SimpleDocument(cs));
+		setText(new StringDocument(cs));
 	}
 
 	public final void setText(Document s) {
@@ -270,7 +270,7 @@ public abstract class MLexer {
 		if (en - st != s.length()) return false;
 		int ori = S.getCursor();
 		S.moveCursor(st);
-		for (int i = st; i < en; i++, S.moveRight())
+		for (int i = st; i < en; i++, S.moveForward())
 			if (S.get() != s.charAt(i - st)) {
 				S.moveCursor(ori);
 				return false;
@@ -302,7 +302,7 @@ public abstract class MLexer {
 	public final boolean isStartOfLine() {
 		int ori = S.getCursor();
 		if (ori == 0) return true;
-		S.moveLeft();
+		S.moveBack();
 		while (S.getCursor() >= 0) {
 			if (S.get() == '\n') {
 				S.moveCursor(ori);
@@ -312,7 +312,7 @@ public abstract class MLexer {
 				S.moveCursor(ori);
 				return false;
 			}
-			S.moveLeft();
+			S.moveBack();
 		}
 		S.moveCursor(ori);
 		return true;
@@ -369,7 +369,7 @@ public abstract class MLexer {
 			int cur = 0;
 			DocumentAccessor s = ori.clone();
 			s.moveCursor(st);
-			for (int i = st; i < en; i++, s.moveRight()) {
+			for (int i = st; i < en; i++, s.moveForward()) {
 				char w = s.get();
 				if (w < 'a' || w > 'z') return false;
 				c = w - 'a';

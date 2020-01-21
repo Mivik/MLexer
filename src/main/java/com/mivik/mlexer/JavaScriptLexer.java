@@ -30,10 +30,10 @@ public class JavaScriptLexer extends JavaLexer {
 				if (cur == '\\')
 					z = !z;
 				else if (cur == '\'' && !z) {
-					S.moveRight();
+					S.moveForward();
 					return TYPE_STRING;
 				} else if (z) z = false;
-				S.moveRight();
+				S.moveForward();
 			} while (true);
 		}
 		if ((!S.eof()) && c == '=' && S.get() == '>') // =>

@@ -47,7 +47,7 @@ public class TestClass {
 		System.arraycopy(cs, 0, ns, i, cs.length);
 		System.arraycopy(S, i, ns, i + cs.length, S.length - i);
 		S = ns;
-		((SimpleDocument) lexer.getDocument()).setText(S);
+		((StringDocument) lexer.getDocument()).setText(S);
 		lexer.onTextReferenceUpdate();
 		lexer.onInsertChars(i, s.length());
 	}
@@ -58,7 +58,7 @@ public class TestClass {
 		System.arraycopy(S, 0, ns, 0, i - len);
 		System.arraycopy(S, i, ns, i - len, S.length - i);
 		S = ns;
-		((SimpleDocument) lexer.getDocument()).setText(S);
+		((StringDocument) lexer.getDocument()).setText(S);
 		lexer.onTextReferenceUpdate();
 		lexer.onDeleteChars(i, len);
 	}

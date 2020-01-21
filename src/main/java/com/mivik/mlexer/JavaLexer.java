@@ -49,20 +49,20 @@ public class JavaLexer extends CommonLexer {
 			if (S.eof()) return TYPE_OPERATOR;
 			char cur = S.get();
 			if (cur == c) {
-				S.moveRight();
+				S.moveForward();
 				if (S.eof()) return TYPE_OPERATOR; // >>
 				c = cur;
 				cur = S.get();
-				if (cur == '=') S.moveRight(); // >>=
+				if (cur == '=') S.moveForward(); // >>=
 				else if (cur == '>') {
-					S.moveRight();
+					S.moveForward();
 					if (S.eof()) return TYPE_OPERATOR; // >>>
 					if (S.get() == '=') { // >>>=
-						S.moveRight();
+						S.moveForward();
 						return TYPE_OPERATOR;
 					}
 				}
-			} else if (cur == '=') S.moveRight(); // >=
+			} else if (cur == '=') S.moveForward(); // >=
 			return TYPE_OPERATOR;
 		}
 		return super.processSymbol(c);

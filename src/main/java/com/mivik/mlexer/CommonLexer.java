@@ -1,7 +1,5 @@
 package com.mivik.mlexer;
 
-import javax.swing.text.Document;
-
 public abstract class CommonLexer extends MLexer {
 	public CommonLexer() {
 	}
@@ -19,13 +17,13 @@ public abstract class CommonLexer extends MLexer {
 		byte type = specialJudge();
 		if (type != FAILED) return type;
 		char c = S.get();
-		S.moveRight();
+		S.moveForward();
 		return processSymbol(c);
 	}
 
 	protected void ReadIdentifier() {
 		do {
-			S.moveRight();
+			S.moveForward();
 		} while ((!S.eof()) && isIdentifierPart(S.get()));
 	}
 
@@ -44,7 +42,7 @@ public abstract class CommonLexer extends MLexer {
 			char cur = c;
 			do {
 				c = cur;
-				S.moveRight();
+				S.moveForward();
 				if (S.eof()) break;
 				cur = S.get();
 				if (cur == 'x' && c == '0' && S.getCursor() - 1 == ST) hex = true;
@@ -70,7 +68,7 @@ public abstract class CommonLexer extends MLexer {
 					case 'D':
 					case 'f':
 					case 'F':
-						S.moveRight();
+						S.moveForward();
 				}
 			return TYPE_NUMBER;
 		}
@@ -91,7 +89,7 @@ public abstract class CommonLexer extends MLexer {
 				if (S.eof()) return TYPE_OPERATOR;
 				char cur = S.get();
 				if (cur == c || cur == '=') {
-					S.moveRight();
+					S.moveForward();
 					return TYPE_OPERATOR;
 				}
 				return TYPE_OPERATOR;
@@ -102,7 +100,7 @@ public abstract class CommonLexer extends MLexer {
 			case '*':
 			case '!': {
 				if (S.eof()) return TYPE_OPERATOR;
-				if (S.get() == '=') S.moveRight();
+				if (S.get() == '=') S.moveForward();
 				return TYPE_OPERATOR;
 			}
 			// 有 # 或者 #= 或者 ## 或者 ##= 用法的运算符
@@ -110,13 +108,13 @@ public abstract class CommonLexer extends MLexer {
 			case '<': {
 				if (S.eof()) return TYPE_OPERATOR;
 				if (S.get() == c) {
-					S.moveRight();
+					S.moveForward();
 					if (S.eof()) return TYPE_OPERATOR;
 					if (S.get() == '=') {
-						S.moveRight();
+						S.moveForward();
 						return TYPE_OPERATOR;
 					}
-				} else if (S.get() == '=') S.moveRight();
+				} else if (S.get() == '=') S.moveForward();
 				return TYPE_OPERATOR;
 			}
 			// 只有 # 用法的运算符
@@ -129,13 +127,13 @@ public abstract class CommonLexer extends MLexer {
 					case '*': {
 						boolean star = false;
 						do {
-							S.moveRight();
+							S.moveForward();
 							if (S.eof()) return TYPE_COMMENT;
 							char cur = S.get();
 							if (cur == '*') star = true;
 							else {
 								if (cur == '/' && star) {
-									S.moveRight();
+									S.moveForward();
 									return TYPE_COMMENT;
 								}
 								star = false;
@@ -144,12 +142,12 @@ public abstract class CommonLexer extends MLexer {
 					}
 					case '/': {
 						do {
-							S.moveRight();
+							S.moveForward();
 						} while ((!S.eof()) && S.get() != '\n');
 						return TYPE_COMMENT;
 					}
 					case '=':
-						S.moveRight();
+						S.moveForward();
 						return TYPE_OPERATOR;
 					default:
 						return TYPE_OPERATOR;
@@ -168,7 +166,7 @@ public abstract class CommonLexer extends MLexer {
 			case '=': {
 				if (S.eof()) return TYPE_ASSIGNMENT;
 				if (S.get() == '=') {
-					S.moveRight();
+					S.moveForward();
 					return TYPE_OPERATOR;
 				}
 				return TYPE_ASSIGNMENT;

@@ -10,7 +10,7 @@ public class XMLLexer extends CommonLexer {
 		int q = S.getCursor();
 		d:
 		if (D[DS[0]] == TYPE_CONTENT_START) {
-			while ((!S.eof()) && S.get() != '<') S.moveRight();
+			while ((!S.eof()) && S.get() != '<') S.moveForward();
 			if (S.eof()) return TYPE_CONTENT;
 			if (S.getCursor() == q) break d;
 			return TYPE_CONTENT;
@@ -21,13 +21,13 @@ public class XMLLexer extends CommonLexer {
 			return TYPE_IDENTIFIER;
 		}
 		char c=S.get();
-		S.moveRight();
+		S.moveForward();
 		char cur=S.get();
 		switch (c) {
 			case '/':
 				if (S.eof()) return TYPE_OPERATOR;
 				if (cur == '>') {
-					S.moveRight();
+					S.moveForward();
 					return TYPE_TAG_END;
 				}
 				return TYPE_OPERATOR;
@@ -35,7 +35,7 @@ public class XMLLexer extends CommonLexer {
 				return TYPE_CONTENT_START;
 			case '?':
 				if (S.eof()) return TYPE_TAG_END;
-				if (cur == '>') S.moveRight();
+				if (cur == '>') S.moveForward();
 				return TYPE_TAG_END;
 			case '<': {
 				if (S.eof()) return TYPE_TAG_START;
@@ -59,23 +59,23 @@ public class XMLLexer extends CommonLexer {
 												if (S.eof()) break;
 												if (S.getAndMoveRight()=='>') break;
 												else {
-													S.moveLeft();
-													S.moveLeft();
+													S.moveBack();
+													S.moveBack();
 												}
-											} else S.moveLeft();
+											} else S.moveBack();
 										}
 									}
 									return TYPE_COMMENT;
 								}
 							}
-							while ((!S.eof()) && S.get() != '>') S.moveRight();
-							if (!S.eof()) S.moveRight();
+							while ((!S.eof()) && S.get() != '>') S.moveForward();
+							if (!S.eof()) S.moveForward();
 							return TYPE_CDATA;
 						case '/':
 							if (S.eof()) return TYPE_TAG_END;
-							do S.moveRight();
+							do S.moveForward();
 							while ((!S.eof()) && S.get() != '>');
-							if (!S.eof()) S.moveRight();
+							if (!S.eof()) S.moveForward();
 							return TYPE_TAG_END;
 					}
 				}
@@ -83,7 +83,7 @@ public class XMLLexer extends CommonLexer {
 			}
 			case '=':
 			case '"':
-				S.moveLeft();
+				S.moveBack();
 				return processSymbol(S.get());
 		}
 		return TYPE_PURE;

@@ -43,7 +43,7 @@ public class CLexer extends CommonLexer {
 		char c = S.get();
 		if (c == '#' && isStartOfLine()) {
 			do {
-				S.moveRight();
+				S.moveForward();
 			} while ((!S.eof()) && S.get() != '\n');
 			return TYPE_PREPROCESSOR_COMMAND;
 		}
