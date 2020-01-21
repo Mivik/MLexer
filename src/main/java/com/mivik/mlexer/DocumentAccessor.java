@@ -41,7 +41,7 @@ public abstract class DocumentAccessor implements Cloneable {
 		return new String(he);
 	}
 
-	public final char getAndMoveRight() {
+	public final char getAndMoveForward() {
 		char ret = get();
 		moveForward();
 		return ret;

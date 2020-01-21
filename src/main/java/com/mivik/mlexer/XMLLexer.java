@@ -41,23 +41,23 @@ public class XMLLexer extends CommonLexer {
 				if (S.eof()) return TYPE_TAG_START;
 				if (isIdentifierStart(cur)) ReadIdentifier();
 				else {
-					switch (S.getAndMoveRight()) {
+					switch (S.getAndMoveForward()) {
 						case '?':
 							if (S.eof()) return TYPE_TAG_START;
 							if (isIdentifierStart(S.get())) ReadIdentifier();
 							return TYPE_TAG_START;
 						case '!':
 							if (S.eof()) return TYPE_TAG_START;
-							if (S.getAndMoveRight() == '-') {
+							if (S.getAndMoveForward() == '-') {
 								if (S.eof()) return TYPE_TAG_START;
-								if (S.getAndMoveRight() == '-') {
+								if (S.getAndMoveForward() == '-') {
 									if (S.eof()) return TYPE_TAG_START;
 									while (!S.eof()) {
-										if (S.getAndMoveRight()=='-') {
+										if (S.getAndMoveForward()=='-') {
 											if (S.eof()) break;
-											if (S.getAndMoveRight()=='-') {
+											if (S.getAndMoveForward()=='-') {
 												if (S.eof()) break;
-												if (S.getAndMoveRight()=='>') break;
+												if (S.getAndMoveForward()=='>') break;
 												else {
 													S.moveBack();
 													S.moveBack();
