@@ -7,15 +7,7 @@ public class TestClass {
 	private static MLexer lexer;
 
 	public static void main(String[] args) {
-		lexer = new JavaLexer();
-		lexer.setText(S);
-		printState();
-		deleteString(1, 1);
-		printState();
-		insertString(0, "/*");
-		printState();
-		deleteString(2, 2);
-		printState();
+		benchmark();
 	}
 
 	private static void benchmark() {

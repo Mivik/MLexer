@@ -12,7 +12,7 @@ public abstract class MLexer {
 			FAILED = -1, EOF = -2;
 
 	protected Document DOC;
-	protected DocumentAccessor S;
+	protected CursorWrapper S;
 	public int ST;
 	public byte[] D = new byte[EXPAND_SIZE + 1];
 	public int[] DS = new int[EXPAND_SIZE + 1];
@@ -172,19 +172,17 @@ public abstract class MLexer {
 		setText(new StringDocument(cs));
 	}
 
-	public final void setText(Document s) {
+	public final <T extends Cursor<T>> void setText(Document<T> s) {
 		this.DOC = s;
-		this.S = s.getAccessor();
+		this.S = new CursorWrapper<>(s, s.getBeginCursor());
 		onTextReferenceUpdate();
-		if (_AutoParse) parseAll();
-		else _Parsed = false;
 	}
 
 	public final Document getDocument() {
 		return this.DOC;
 	}
 
-	public final DocumentAccessor getDocumentAccessor() {
+	public final Cursor getDocumentAccessor() {
 		return this.S;
 	}
 
@@ -364,10 +362,10 @@ public abstract class MLexer {
 			return t;
 		}
 
-		public boolean hasWord(DocumentAccessor ori, int st, int en) {
+		public <T extends Cursor<T>> boolean hasWord(CursorWrapper<T> ori, int st, int en) {
 			int c;
 			int cur = 0;
-			DocumentAccessor s = ori.clone();
+			CursorWrapper<T> s = ori.clone();
 			s.moveCursor(st);
 			for (int i = st; i < en; i++, s.moveForward()) {
 				char w = s.get();
