@@ -3,7 +3,8 @@ package com.mivik.mlexer;
 import java.util.Random;
 
 public class TestClass {
-	private static char[] S = ("public class test{}").toCharArray();
+	private static StringBuilder S = new StringBuilder("a::b");
+	private static StringBuilderDocument doc = new StringBuilderDocument(S);
 	private static MLexer lexer;
 
 	public static void main(String[] args) {
@@ -11,13 +12,14 @@ public class TestClass {
 	}
 
 	private static void benchmark() {
-		final int count = 1000;
+		final int count = 10000;
 		long st = System.currentTimeMillis();
 		Random random = new Random();
-		lexer = new JSONLexer();
-		lexer.setText(S);
+		lexer = new JavaLexer();
+		lexer.setDocument(doc);
+		lexer.parseAll();
 		for (int i = 0; i < count; i++) {
-			int ind = random.nextInt(S.length + 1);
+			int ind = random.nextInt(S.length() + 1);
 			if (random.nextInt(8) == 0) insertString(ind, "\n");
 			else insertString(ind, "" + ((char) (random.nextInt(95) + 32)));
 		}
@@ -33,24 +35,13 @@ public class TestClass {
 	}
 
 	private static void insertString(int i, String s) {
-		char[] cs = s.toCharArray();
-		char[] ns = new char[cs.length + S.length];
-		System.arraycopy(S, 0, ns, 0, i);
-		System.arraycopy(cs, 0, ns, i, cs.length);
-		System.arraycopy(S, i, ns, i + cs.length, S.length - i);
-		S = ns;
-		((StringDocument) lexer.getDocument()).setText(S);
+		S.insert(i, s);
 		lexer.onTextReferenceUpdate();
 		lexer.onInsertChars(i, s.length());
 	}
 
 	private static void deleteString(int i, int len) {
-		if (len > i) len = i;
-		char[] ns = new char[S.length - len];
-		System.arraycopy(S, 0, ns, 0, i - len);
-		System.arraycopy(S, i, ns, i - len, S.length - i);
-		S = ns;
-		((StringDocument) lexer.getDocument()).setText(S);
+		S.delete(i - len, i);
 		lexer.onTextReferenceUpdate();
 		lexer.onDeleteChars(i, len);
 	}

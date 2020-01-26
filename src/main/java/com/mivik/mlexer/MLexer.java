@@ -1,6 +1,7 @@
 package com.mivik.mlexer;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 
 public abstract class MLexer {
@@ -11,24 +12,16 @@ public abstract class MLexer {
 			TYPE_PREPROCESSOR_COMMAND = 18, TYPE_TAG_START = 19, TYPE_TAG_END = 20, TYPE_CONTENT_START = 21, TYPE_CONTENT = 22, TYPE_CDATA = 23,
 			FAILED = -1, EOF = -2;
 
+	private static String[] __TypeNames = null;
+
 	protected Document DOC;
 	protected CursorWrapper S;
 	public int ST;
 	public byte[] D = new byte[EXPAND_SIZE + 1];
 	public int[] DS = new int[EXPAND_SIZE + 1];
-	private boolean _AutoParse = true;
 	private boolean _Parsed = false;
 
 	public MLexer() {
-	}
-
-	public final void setAutoParse(boolean flag) {
-		if (_AutoParse = flag)
-			parseAll();
-	}
-
-	public final boolean isAutoParse() {
-		return _AutoParse;
 	}
 
 	public final boolean isParsed() {
@@ -168,11 +161,11 @@ public abstract class MLexer {
 		}
 	}
 
-	public final void setText(char[] cs) {
-		setText(new StringDocument(cs));
+	public final void setDocument(char[] cs) {
+		setDocument(new StringDocument(cs));
 	}
 
-	public final <T extends Cursor<T>> void setText(Document<T> s) {
+	public final <T extends Cursor<T>> void setDocument(Document<T> s) {
 		this.DOC = s;
 		this.S = new CursorWrapper<>(s, s.getBeginCursor());
 		onTextReferenceUpdate();
@@ -187,8 +180,7 @@ public abstract class MLexer {
 	}
 
 	public final void onTextReferenceUpdate() {
-		if (_AutoParse) parseAll();
-		else _Parsed = false;
+		_Parsed = false;
 	}
 
 	public final int findPart(int pos) {
@@ -236,9 +228,9 @@ public abstract class MLexer {
 
 	public void parseAll() {
 		if (_Parsed) return;
+		if (S == null) return;
 		S.moveCursor(0);
 		this.DS[0] = 0;
-		if (S == null) return;
 		byte type;
 		while ((type = getNext()) != EOF) {
 			if (++DS[0] == D.length) expandDArray();
@@ -251,13 +243,17 @@ public abstract class MLexer {
 	}
 
 	public String getTypeName(byte type) {
-		try {
-			for (Field one : this.getClass().getFields())
-				if (one.getType() == byte.class && one.getByte(null) == type) return one.getName();
-			return null;
-		} catch (Throwable t) {
-			return null;
+		if (__TypeNames == null) {
+			__TypeNames = new String[Byte.MAX_VALUE - Byte.MIN_VALUE + 1];
+			try {
+				for (Field one : this.getClass().getFields())
+					if (one.getType() == byte.class && Modifier.isStatic(one.getModifiers()))
+						__TypeNames[one.getByte(null)] = one.getName();
+			} catch (Throwable t) {
+				return null;
+			}
 		}
+		return __TypeNames[type];
 	}
 
 	public int length() {
@@ -388,14 +384,14 @@ public abstract class MLexer {
 				if (c < 0 || c >= 26) return EMPTY;
 				if ((cur = C[cur][c]) == 0) return EMPTY;
 			}
-			StringBuffer full = new StringBuffer();
+			StringBuilder full = new StringBuilder();
 			full.append(cs, st, en - st);
 			ArrayList<String> ret = new ArrayList<>();
 			listWords(full, cur, ret);
 			return ret.toArray(EMPTY);
 		}
 
-		private void listWords(StringBuffer full, int node, ArrayList<String> str) {
+		private void listWords(StringBuilder full, int node, ArrayList<String> str) {
 			if (L[node]) str.add(full.toString());
 			for (char c = 0; c < 26; c++) {
 				if (C[node][c] == 0) continue;

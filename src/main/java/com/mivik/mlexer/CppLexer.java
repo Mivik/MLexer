@@ -16,8 +16,21 @@ public class CppLexer extends CLexer {
 
 	@Override
 	protected byte getWordType(int st, int en) {
-		if (equals(st, en, "true") || equals(st,en, "false")) return TYPE_BOOLEAN;
+		if (equals(st, en, "true") || equals(st, en, "false")) return TYPE_BOOLEAN;
 		return super.getWordType(st, en);
+	}
+
+	@Override
+	public byte processSymbol(char c) {
+		if (c == ':') {
+			if (S.eof()) return TYPE_OPERATOR;
+			char cur = S.get();
+			if (cur == ':') {
+				S.moveForward();
+				return TYPE_OPERATOR;
+			}
+		}
+		return super.processSymbol(c);
 	}
 
 	public CppLexer() {
