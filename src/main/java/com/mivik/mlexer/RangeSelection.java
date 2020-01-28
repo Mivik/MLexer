@@ -1,6 +1,6 @@
 package com.mivik.mlexer;
 
-public class RangeSelection<T extends Cursor> {
+public class RangeSelection<T extends Cursor> implements Cloneable {
 	public T begin, end;
 
 	public RangeSelection(T cursor) {
@@ -16,5 +16,15 @@ public class RangeSelection<T extends Cursor> {
 	public RangeSelection(T begin, T end) {
 		this.begin = (T) begin.clone();
 		this.end = (T) end.clone();
+	}
+
+	public RangeSelection(RangeSelection<T> ori) {
+		this.begin = (T) ori.begin.clone();
+		this.end = (T) ori.end.clone();
+	}
+
+	@Override
+	public RangeSelection<T> clone() {
+		return new RangeSelection<>(this);
 	}
 }
