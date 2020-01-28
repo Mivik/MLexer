@@ -13,6 +13,11 @@ public class StringBuilderDocument extends Document<StringBuilderDocument.Cursor
 	}
 
 	@Override
+	public Cursor getEndCursor() {
+		return new Cursor(S.length());
+	}
+
+	@Override
 	public char charAt(Cursor x) {
 		return S.charAt(x.ind);
 	}

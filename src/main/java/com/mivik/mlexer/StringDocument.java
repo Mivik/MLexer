@@ -42,6 +42,11 @@ public class StringDocument extends Document<StringDocument.Cursor> {
 	}
 
 	@Override
+	public Cursor getEndCursor() {
+		return new Cursor(len);
+	}
+
+	@Override
 	public char charAt(Cursor x) {
 		return cs[off + x.ind];
 	}

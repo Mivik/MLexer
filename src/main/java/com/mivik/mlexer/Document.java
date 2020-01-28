@@ -3,6 +3,8 @@ package com.mivik.mlexer;
 public abstract class Document<T extends Cursor> {
 	public abstract T getBeginCursor();
 
+	public abstract T getEndCursor();
+
 	public abstract char charAt(T x);
 
 	public abstract boolean moveBack(T x);
@@ -59,6 +61,19 @@ public abstract class Document<T extends Cursor> {
 	}
 
 	public boolean eof(T x) {
-		return Cursor2Index(x) == length();
+		return Cursor2Index(x) == legngth();
+	}
+
+	public final RangeSelection<T> getFullRangeSelection() {
+		return new RangeSelection<>(getBeginCursor(), getEndCursor());
+	}
+
+	@Override
+	public String toString() {
+		return substring(getFullRangeSelection());
+	}
+
+	public char[] toCharArray() {
+		return subChars(getFullRangeSelection());
 	}
 }
