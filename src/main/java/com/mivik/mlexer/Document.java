@@ -61,7 +61,7 @@ public abstract class Document<T extends Cursor> {
 	}
 
 	public boolean eof(T x) {
-		return Cursor2Index(x) == legngth();
+		return Cursor2Index(x) == length();
 	}
 
 	public final RangeSelection<T> getFullRangeSelection() {
