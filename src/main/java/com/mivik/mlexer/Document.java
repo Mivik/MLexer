@@ -7,6 +7,10 @@ public abstract class Document<T extends Cursor> {
 
 	public abstract char charAt(T x);
 
+	public final char charAt(int ind) {
+		return charAt(Index2Cursor(ind));
+	}
+
 	public abstract boolean moveBack(T x);
 
 	public abstract boolean moveForward(T x);
