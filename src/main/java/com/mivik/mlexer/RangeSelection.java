@@ -8,14 +8,17 @@ public class RangeSelection<T extends Cursor> implements Cloneable {
 		this.end = (T) cursor.clone();
 	}
 
-	public RangeSelection(Document<T> doc, int st, int en) {
-		this.begin = doc.Index2Cursor(st);
-		this.end = doc.Index2Cursor(en);
-	}
-
 	public RangeSelection(T begin, T end) {
 		this.begin = (T) begin.clone();
 		this.end = (T) end.clone();
+	}
+
+	public RangeSelection(Document<T> doc, int cursor) {
+		this(doc.Index2Cursor(cursor));
+	}
+
+	public RangeSelection(Document<T> doc, int st, int en) {
+		this(doc.Index2Cursor(st), doc.Index2Cursor(en));
 	}
 
 	public RangeSelection(RangeSelection<T> ori) {
