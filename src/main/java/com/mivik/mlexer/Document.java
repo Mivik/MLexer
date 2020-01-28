@@ -1,6 +1,6 @@
 package com.mivik.mlexer;
 
-public abstract class Document<T extends Cursor<T>> {
+public abstract class Document<T extends Cursor> {
 	public abstract T getBeginCursor();
 
 	public abstract char charAt(T x);

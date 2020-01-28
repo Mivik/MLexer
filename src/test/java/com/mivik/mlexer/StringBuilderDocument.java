@@ -74,7 +74,7 @@ public class StringBuilderDocument extends Document<StringBuilderDocument.Cursor
 		return x.ind;
 	}
 
-	static class Cursor extends com.mivik.mlexer.Cursor<Cursor> {
+	static class Cursor extends com.mivik.mlexer.Cursor {
 		private int ind;
 
 		public Cursor(int ind) {
@@ -84,12 +84,6 @@ public class StringBuilderDocument extends Document<StringBuilderDocument.Cursor
 		@Override
 		public Cursor clone() {
 			return new Cursor(ind);
-		}
-
-		@Override
-		public int compareTo(com.mivik.mlexer.Cursor<Cursor> cursor) {
-			Cursor t = (Cursor) cursor;
-			return Integer.compare(ind, t.ind);
 		}
 	}
 }

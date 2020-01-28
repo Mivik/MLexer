@@ -1,6 +1,6 @@
 package com.mivik.mlexer;
 
-public abstract class Cursor<T extends Cursor<T>> implements Cloneable, Comparable<Cursor<T>> {
+public abstract class Cursor implements Cloneable {
 	@Override
-	public abstract T clone();
+	public abstract Cursor clone();
 }

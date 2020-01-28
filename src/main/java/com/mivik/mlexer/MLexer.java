@@ -165,7 +165,7 @@ public abstract class MLexer {
 		setDocument(new StringDocument(cs));
 	}
 
-	public final <T extends Cursor<T>> void setDocument(Document<T> s) {
+	public final <T extends Cursor> void setDocument(Document<T> s) {
 		this.DOC = s;
 		this.S = new CursorWrapper<>(s, s.getBeginCursor());
 		onTextReferenceUpdate();
@@ -358,7 +358,7 @@ public abstract class MLexer {
 			return t;
 		}
 
-		public <T extends Cursor<T>> boolean hasWord(CursorWrapper<T> ori, int st, int en) {
+		public <T extends Cursor> boolean hasWord(CursorWrapper<T> ori, int st, int en) {
 			int c;
 			int cur = 0;
 			CursorWrapper<T> s = ori.clone();

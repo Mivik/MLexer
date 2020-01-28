@@ -75,7 +75,7 @@ public abstract class CommonLexer extends MLexer {
 		return FAILED;
 	}
 
-	public final <T extends Cursor<T>> boolean isKeyword(CursorWrapper<T> s, int st, int en) {
+	public final <T extends Cursor> boolean isKeyword(CursorWrapper<T> s, int st, int en) {
 		return getKeywordTrie().hasWord(s, st, en);
 	}
 

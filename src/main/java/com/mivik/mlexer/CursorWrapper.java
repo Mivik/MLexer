@@ -1,6 +1,6 @@
 package com.mivik.mlexer;
 
-public class CursorWrapper<T extends Cursor<T>> extends Cursor<CursorWrapper<T>> {
+public class CursorWrapper<T extends Cursor> extends Cursor {
 	private Document<T> doc;
 	private T cursor;
 	private int ind;
@@ -71,10 +71,5 @@ public class CursorWrapper<T extends Cursor<T>> extends Cursor<CursorWrapper<T>>
 	@Override
 	public CursorWrapper<T> clone() {
 		return new CursorWrapper<>(doc, cursor);
-	}
-
-	@Override
-	public int compareTo(Cursor<CursorWrapper<T>> t) {
-		return cursor.compareTo(((CursorWrapper<T>) t).cursor);
 	}
 }

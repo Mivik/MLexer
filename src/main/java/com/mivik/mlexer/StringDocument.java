@@ -102,7 +102,7 @@ public class StringDocument extends Document<StringDocument.Cursor> {
 		return x.ind;
 	}
 
-	static class Cursor extends com.mivik.mlexer.Cursor<Cursor> {
+	static class Cursor extends com.mivik.mlexer.Cursor implements Comparable<Cursor> {
 		private int ind;
 
 		public Cursor() {
@@ -119,8 +119,8 @@ public class StringDocument extends Document<StringDocument.Cursor> {
 		}
 
 		@Override
-		public int compareTo(com.mivik.mlexer.Cursor<Cursor> cursor) {
-			return Integer.compare(ind, ((Cursor) cursor).ind);
+		public int compareTo(Cursor cursor) {
+			return Integer.compare(ind, cursor.ind);
 		}
 	}
 }

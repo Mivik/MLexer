@@ -1,11 +1,11 @@
 package com.mivik.mlexer;
 
-public class RangeSelection<T extends Cursor<T>> implements Comparable<RangeSelection<T>> {
+public class RangeSelection<T extends Cursor> {
 	public T begin, end;
 
 	public RangeSelection(T cursor) {
-		this.begin = cursor.clone();
-		this.end = cursor.clone();
+		this.begin = (T) cursor.clone();
+		this.end = (T) cursor.clone();
 	}
 
 	public RangeSelection(Document<T> doc, int st, int en) {
@@ -14,15 +14,7 @@ public class RangeSelection<T extends Cursor<T>> implements Comparable<RangeSele
 	}
 
 	public RangeSelection(T begin, T end) {
-		this.begin = begin.clone();
-		this.end = end.clone();
-	}
-
-	@Override
-	public int compareTo(RangeSelection<T> t) {
-		int ret = begin.compareTo(t.begin);
-		if (ret != 0) return ret;
-		ret = end.compareTo(t.end);
-		return ret;
+		this.begin = (T) begin.clone();
+		this.end = (T) end.clone();
 	}
 }
