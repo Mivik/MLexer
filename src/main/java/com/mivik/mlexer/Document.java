@@ -42,7 +42,7 @@ public abstract class Document<T extends Cursor> {
 		return dst;
 	}
 
-	public final String substring(RangeSelection sel) {
+	public final String substring(RangeSelection<T> sel) {
 		return new String(subChars(sel));
 	}
 
