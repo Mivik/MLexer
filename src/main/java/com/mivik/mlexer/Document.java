@@ -31,7 +31,7 @@ public abstract class Document<T extends Cursor> {
 		return subChars(sel, dst, 0);
 	}
 
-	public final char[] subChars(RangeSelection<T> sel, char[] dst, int off) {
+	public char[] subChars(RangeSelection<T> sel, char[] dst, int off) {
 		StringBuilder ret = subStringBuilder(sel);
 		if (dst == null) dst = new char[ret.length()];
 		ret.getChars(0, ret.length(), dst, off);
