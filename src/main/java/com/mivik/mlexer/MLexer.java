@@ -246,14 +246,14 @@ public abstract class MLexer {
 		if (__TypeNames == null) {
 			__TypeNames = new String[Byte.MAX_VALUE - Byte.MIN_VALUE + 1];
 			try {
-				for (Field one : this.getClass().getFields())
+				for (Field one : MLexer.class.getFields())
 					if (one.getType() == byte.class && Modifier.isStatic(one.getModifiers()))
-						__TypeNames[one.getByte(null)] = one.getName();
+						__TypeNames[(int) one.getByte(null) - Byte.MIN_VALUE] = one.getName();
 			} catch (Throwable t) {
 				return null;
 			}
 		}
-		return __TypeNames[type];
+		return __TypeNames[(int) type - Byte.MIN_VALUE];
 	}
 
 	public int length() {
