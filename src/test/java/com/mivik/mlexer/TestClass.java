@@ -3,12 +3,16 @@ package com.mivik.mlexer;
 import java.util.Random;
 
 public class TestClass {
-	private static StringBuilder S = new StringBuilder("a+=b");
+	private static StringBuilder S = new StringBuilder("<!DOCTYPE html>\n" +
+			"<html>\n" +
+			"<head>\n" +
+			"</body>\n" +
+			"</html>\n");
 	private static StringBuilderDocument doc = new StringBuilderDocument(S);
 	private static MLexer lexer;
 
 	public static void main(String[] args) {
-		lexer = new JavaLexer();
+		lexer = new XMLLexer();
 		lexer.setDocument(doc);
 		lexer.parseAll();
 		printState();

@@ -43,7 +43,9 @@ public class CursorWrapper<T extends Cursor> extends Cursor {
 	}
 
 	public char getAndMoveForward() {
-		return doc.getAndMoveForward(cursor);
+		char ret = doc.charAt(cursor);
+		if (doc.moveForward(cursor)) ++ind;
+		return ret;
 	}
 
 	public char get() {

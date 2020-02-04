@@ -58,12 +58,6 @@ public abstract class Document<T extends Cursor> {
 		return sel;
 	}
 
-	public final char getAndMoveForward(T x) {
-		char ret = charAt(x);
-		moveForward(x);
-		return ret;
-	}
-
 	public boolean eof(T x) {
 		return Cursor2Index(x) == length();
 	}

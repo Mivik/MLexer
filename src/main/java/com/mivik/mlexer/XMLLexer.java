@@ -22,6 +22,12 @@ public class XMLLexer extends CommonLexer {
 		}
 		char c = S.get();
 		S.moveForward();
+		if (S.ind == 4234) {
+			System.out.println(S);
+			System.out.println(S.ind);
+			System.out.println(S.length());
+		}
+		System.out.println(S.ind);
 		char cur = S.eof() ? 0 : S.get();
 		switch (c) {
 			case '/':
