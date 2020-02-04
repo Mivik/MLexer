@@ -124,6 +124,13 @@ public class StringDocument extends Document<StringDocument.Cursor> {
 		}
 
 		@Override
+		public void set(com.mivik.mlexer.Cursor cursor) {
+			if (!(cursor instanceof Cursor)) return;
+			Cursor t = (Cursor) cursor;
+			this.ind = t.ind;
+		}
+
+		@Override
 		public int compareTo(Cursor cursor) {
 			return Integer.compare(ind, cursor.ind);
 		}

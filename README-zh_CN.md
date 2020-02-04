@@ -34,7 +34,7 @@ _MLexer_ 是一个为Java、JavaScript、C++、C等编程语言设计的词法�
 
 那么自定义文档类型又有什么用？它意味这 _MLexer_ 接受的内容参数可以是任意继承自`com.mivik.mlexer.Document`的类！
 
-但它的实际用处是什么呢？假设你有一个自定义的文档类型，通过把文字按行分割来管理文档。如果你想对这个文档进行词法解析，你可能需要把它先转换为`String`然后再传入 Lexer。然而，在 _MLexer_ 中，你只需要通过继承`com.mivik.mlexer.Document`，提供一个继承自`com.mivik.mlexer.Cursor`的光标类型，然后实现几个类似于`get(Cursor cursor)`、`moveForward(Cursor cursor)`的方法，就可以把你的文档直接传给 _MLexer_ 啦！
+但它的实际用处是什么呢？假设你有一个自定义的文档类型，通过把文字按行分割来管理文档。如果你想对这个文档进行词法解析，你可能需要把它先转换为`String`然后再传入 Lexer。然而，在 _MLexer_ 中，你只需要通过继承`com.mivik.mlexer.Document`，提供一个继承自`com.mivik.mlexer.Cursor`的光标类型，然后实现几个类似于`get(Cursor indicator)`、`moveForward(Cursor indicator)`的方法，就可以把你的文档直接传给 _MLexer_ 啦！
 
 ## 支持本项目
 

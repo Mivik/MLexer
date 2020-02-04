@@ -4,7 +4,7 @@ public class NullLexer extends MLexer {
 	@Override
 	protected byte getNext() {
 		if (S.eof()) return EOF;
-		S.moveCursor(S.length());
+		S.move(S.length());
 		return TYPE_PURE;
 	}
 

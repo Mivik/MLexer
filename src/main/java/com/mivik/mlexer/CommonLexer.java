@@ -6,13 +6,13 @@ public abstract class CommonLexer extends MLexer {
 
 	protected byte getNext() {
 		if (S.eof()) return EOF;
-		ST = S.getCursor();
+		ST = S.getIndex();
 		if (isWhitespace(S.get())) ReadSpaces();
 		if (S.eof()) return EOF;
 		if (isIdentifierStart(S.get())) {
-			int st = S.getCursor();
+			int st = S.getIndex();
 			ReadIdentifier();
-			return getWordType(st, S.getCursor());
+			return getWordType(st, S.getIndex());
 		}
 		byte type = specialJudge();
 		if (type != FAILED) return type;
@@ -30,11 +30,11 @@ public abstract class CommonLexer extends MLexer {
 	// Overrideable
 	// Special judge for stuffs such as numbers, or pragma statement in C
 	// Called when MLexer reads content that is neither space nor identifier
-	// If this method returns TYPE_FAILED, MLexer will treat the content as symbols (processSymbol)
+	// If this method returns FAILED, MLexer will treat the content as symbols (processSymbol)
 	// 可重写
 	// 特殊判断一些类似于数字或者C语言里面的预编译指令
 	// 当MLexer读到非空格非标志符时会调用此函数
-	// 如果函数返回TYPE_FAILED，MLexer将会把当前内容作为符号自动处理（processSymbol）
+	// 如果函数返回FAILED，MLexer将会把当前内容作为符号自动处理（processSymbol）
 	public byte specialJudge() {
 		char c = S.get();
 		if (Character.isDigit(c) || c == '.' || c == '-' || c == '+') {
@@ -45,19 +45,19 @@ public abstract class CommonLexer extends MLexer {
 				S.moveForward();
 				if (S.eof()) break;
 				cur = S.get();
-				if (cur == 'x' && c == '0' && S.getCursor() - 1 == ST) hex = true;
+				if (cur == 'x' && c == '0' && S.getIndex() - 1 == ST) hex = true;
 			} while (Character.isDigit(cur) || cur == '.' || (cur == 'e' && (!S.eof()) && c != '.') || (hex && Character.isLetter(cur)) || ((cur == '-' || cur == '+') && c == 'e'));
-			if ((!S.eof()) && S.getCursor() == ST + 1) {
-				int ori = S.getCursor();
-				S.moveCursor(ST);
+			if ((!S.eof()) && S.getIndex() == ST + 1) {
+				int ori = S.getIndex();
+				S.move(ST);
 				char cc = S.get();
-				S.moveCursor(ori);
+				S.move(ori);
 				switch (cc) {
 					case '.':
 						return TYPE_PERIOD;
 					case '+':
 					case '-':
-						return TYPE_OPERATOR;
+						return FAILED;
 				}
 			}
 			if (!S.eof())

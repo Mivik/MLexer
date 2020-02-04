@@ -72,7 +72,7 @@ public abstract class MLexer {
 			for (int i = 1; i <= DS[0]; i++) DS[i] += len;
 			return;
 		}
-		S.moveCursor(Math.min(DS[part], pos));
+		S.move(Math.min(DS[part], pos));
 //		int en = DE[part] + len;
 		int afterLen = Math.max(DS[0] - part, 0);
 		byte[] afterD = new byte[afterLen];
@@ -94,10 +94,10 @@ public abstract class MLexer {
 			DS[DS[0]] = ST;
 			if (S.eof()) return;
 			if (i != afterLen) if (ST == afterDS[i] && type == afterD[i]) break;
-			if (i != afterLen && S.getCursor() >= afterDS[i]) {
+			if (i != afterLen && S.getIndex() >= afterDS[i]) {
 				do {
 					i++;
-				} while (i != afterLen && S.getCursor() >= afterDS[i]);
+				} while (i != afterLen && S.getIndex() >= afterDS[i]);
 				if (i != afterLen) i--;
 			}
 		}
@@ -123,7 +123,7 @@ public abstract class MLexer {
 			for (int i = 1; i <= DS[0]; i++) DS[i] -= len;
 			return;
 		}
-		S.moveCursor(Math.min(DS[part1], pos));
+		S.move(Math.min(DS[part1], pos));
 		int afterLen = Math.max(DS[0] - part2, 0);
 		byte[] afterD = new byte[afterLen];
 		int[] afterDS = new int[afterLen];
@@ -144,10 +144,10 @@ public abstract class MLexer {
 			DS[DS[0]] = ST;
 			if (S.eof()) return;
 			if (i != afterLen) if (ST == afterDS[i] && type == afterD[i]) break;
-			if (i != afterLen && S.getCursor() >= afterDS[i]) {
+			if (i != afterLen && S.getIndex() >= afterDS[i]) {
 				do {
 					i++;
-				} while (i != afterLen && S.getCursor() >= afterDS[i]);
+				} while (i != afterLen && S.getIndex() >= afterDS[i]);
 				if (i != afterLen) i--;
 			}
 		}
@@ -212,7 +212,7 @@ public abstract class MLexer {
 	}
 
 	public final void clearCache() {
-		S.moveCursor(0);
+		S.move(0);
 		this.DS[0] = 0;
 	}
 
@@ -229,7 +229,7 @@ public abstract class MLexer {
 	public void parseAll() {
 		if (_Parsed) return;
 		if (S == null) return;
-		S.moveCursor(0);
+		S.move(0);
 		this.DS[0] = 0;
 		byte type;
 		while ((type = getNext()) != EOF) {
@@ -262,19 +262,19 @@ public abstract class MLexer {
 
 	protected final boolean equals(int st, int en, String s) {
 		if (en - st != s.length()) return false;
-		int ori = S.getCursor();
-		S.moveCursor(st);
+		int ori = S.getIndex();
+		S.move(st);
 		for (int i = st; i < en; i++, S.moveForward())
 			if (S.get() != s.charAt(i - st)) {
-				S.moveCursor(ori);
+				S.move(ori);
 				return false;
 			}
-		S.moveCursor(ori);
+		S.move(ori);
 		return true;
 	}
 
 	public final String getLastString() {
-		return S.substring(ST, S.getCursor());
+		return S.substring(ST, S.getIndex());
 	}
 
 	public int getPartEnd(int part) {
@@ -294,21 +294,21 @@ public abstract class MLexer {
 	}
 
 	public final boolean isStartOfLine() {
-		int ori = S.getCursor();
+		int ori = S.getIndex();
 		if (ori == 0) return true;
 		S.moveBack();
-		while (S.getCursor() >= 0) {
+		while (S.getIndex() >= 0) {
 			if (S.get() == '\n') {
-				S.moveCursor(ori);
+				S.move(ori);
 				return true;
 			}
 			if (!isWhitespace(S.get())) {
-				S.moveCursor(ori);
+				S.move(ori);
 				return false;
 			}
 			S.moveBack();
 		}
-		S.moveCursor(ori);
+		S.move(ori);
 		return true;
 	}
 
@@ -362,7 +362,7 @@ public abstract class MLexer {
 			int c;
 			int cur = 0;
 			CursorWrapper<T> s = ori.clone();
-			s.moveCursor(st);
+			s.move(st);
 			for (int i = st; i < en; i++, s.moveForward()) {
 				char w = s.get();
 				if (w < 'a' || w > 'z') return false;

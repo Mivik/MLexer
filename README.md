@@ -34,7 +34,7 @@ For example, if you wrote a editor and wanted to make it able to highlight code,
 
 How about custom document type? It means the content parameter in _MLexer_ can be any classes extended from `com.mivik.mlexer.Document` !
 
-But what's its particular application? Imagine now you have a custom document type which manages contents by separating them into lines. If you want to lex them in the normal way, you have to convert the content into String before passing the content to the lexer. However, in _MLexer_, you can make your document type extend from `com.mivik.mlexer.Document` by providing a cursor type extended from `com.mivik.mlexer.Cursor` and implementing several simple methods such as `get(Cursor cursor)`, `moveForward(Cursor cursor)`, then you can directly pass your document to _MLexer_ !
+But what's its particular application? Imagine now you have a custom document type which manages contents by separating them into lines. If you want to lex them in the normal way, you have to convert the content into String before passing the content to the lexer. However, in _MLexer_, you can make your document type extend from `com.mivik.mlexer.Document` by providing a indicator type extended from `com.mivik.mlexer.Cursor` and implementing several simple methods such as `get(Cursor indicator)`, `moveForward(Cursor indicator)`, then you can directly pass your document to _MLexer_ !
 
 ## Show your support
 

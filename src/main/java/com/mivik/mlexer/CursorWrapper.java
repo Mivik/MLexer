@@ -2,13 +2,20 @@ package com.mivik.mlexer;
 
 public class CursorWrapper<T extends Cursor> extends Cursor {
 	private Document<T> doc;
-	private T cursor;
-	private int ind;
+	public int ind;
+	public T cursor;
 
 	public CursorWrapper(Document<T> doc, T cursor) {
 		this.doc = doc;
-		this.cursor = cursor;
+		this.cursor = (T) cursor.clone();
 		this.ind = doc.Cursor2Index(cursor);
+	}
+
+	@Override
+	public void set(Cursor cursor) {
+		if (this.cursor.getClass() != cursor.getClass()) return;
+		this.cursor.set(cursor);
+		this.ind = doc.Cursor2Index(this.cursor);
 	}
 
 	public boolean moveBack() {
@@ -43,8 +50,12 @@ public class CursorWrapper<T extends Cursor> extends Cursor {
 		return doc.charAt(cursor);
 	}
 
-	public int getCursor() {
+	public int getIndex() {
 		return ind;
+	}
+
+	public void updateCursor() {
+		ind = doc.Cursor2Index(cursor);
 	}
 
 	public boolean eof() {
@@ -55,7 +66,7 @@ public class CursorWrapper<T extends Cursor> extends Cursor {
 		return doc.length();
 	}
 
-	public void moveCursor(int ind) {
+	public void move(int ind) {
 		cursor = doc.Index2Cursor(ind);
 		this.ind = doc.Cursor2Index(cursor);
 	}

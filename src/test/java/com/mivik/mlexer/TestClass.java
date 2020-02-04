@@ -3,12 +3,15 @@ package com.mivik.mlexer;
 import java.util.Random;
 
 public class TestClass {
-	private static StringBuilder S = new StringBuilder("a::b");
+	private static StringBuilder S = new StringBuilder("a+=b");
 	private static StringBuilderDocument doc = new StringBuilderDocument(S);
 	private static MLexer lexer;
 
 	public static void main(String[] args) {
-		benchmark();
+		lexer = new JavaLexer();
+		lexer.setDocument(doc);
+		lexer.parseAll();
+		printState();
 	}
 
 	private static void benchmark() {

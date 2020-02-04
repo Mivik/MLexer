@@ -26,6 +26,11 @@ public class RangeSelection<T extends Cursor> implements Cloneable {
 		this.end = (T) ori.end.clone();
 	}
 
+	public void set(RangeSelection<T> t) {
+		begin.set(t.begin);
+		end.set(t.end);
+	}
+
 	@Override
 	public RangeSelection<T> clone() {
 		return new RangeSelection<>(this);

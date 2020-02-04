@@ -4,15 +4,15 @@ public class XMLLexer extends CommonLexer {
 	@Override
 	protected byte getNext() {
 		if (S.eof()) return EOF;
-		ST = S.getCursor();
+		ST = S.getIndex();
 		if (S.get() == ' ' || S.get() == '\t') ReadSpaces();
 		if (S.eof()) return EOF;
-		int q = S.getCursor();
+		int q = S.getIndex();
 		d:
 		if (D[DS[0]] == TYPE_CONTENT_START) {
 			while ((!S.eof()) && S.get() != '<') S.moveForward();
 			if (S.eof()) return TYPE_CONTENT;
-			if (S.getCursor() == q) break d;
+			if (S.getIndex() == q) break d;
 			return TYPE_CONTENT;
 		}
 

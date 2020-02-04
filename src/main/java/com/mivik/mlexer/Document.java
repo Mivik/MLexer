@@ -48,7 +48,7 @@ public abstract class Document<T extends Cursor> {
 
 	public final RangeSelection<T> fromBegin(T st, int len) {
 		RangeSelection<T> sel = new RangeSelection<>(st, st);
-		moveBack(sel.end, len);
+		moveForward(sel.end, len);
 		return sel;
 	}
 

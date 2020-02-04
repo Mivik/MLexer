@@ -87,6 +87,13 @@ public class StringBuilderDocument extends Document<StringBuilderDocument.Cursor
 		}
 
 		@Override
+		public void set(com.mivik.mlexer.Cursor cursor) {
+			if (!(cursor instanceof Cursor)) return;
+			Cursor t = (Cursor) cursor;
+			this.ind = t.ind;
+		}
+
+		@Override
 		public Cursor clone() {
 			return new Cursor(ind);
 		}
