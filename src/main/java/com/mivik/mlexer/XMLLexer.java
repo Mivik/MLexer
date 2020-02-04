@@ -20,9 +20,9 @@ public class XMLLexer extends CommonLexer {
 			ReadIdentifier();
 			return TYPE_IDENTIFIER;
 		}
-		char c=S.get();
+		char c = S.get();
 		S.moveForward();
-		char cur=S.get();
+		char cur = S.eof() ? 0 : S.get();
 		switch (c) {
 			case '/':
 				if (S.eof()) return TYPE_OPERATOR;
@@ -53,11 +53,11 @@ public class XMLLexer extends CommonLexer {
 								if (S.getAndMoveForward() == '-') {
 									if (S.eof()) return TYPE_TAG_START;
 									while (!S.eof()) {
-										if (S.getAndMoveForward()=='-') {
+										if (S.getAndMoveForward() == '-') {
 											if (S.eof()) break;
-											if (S.getAndMoveForward()=='-') {
+											if (S.getAndMoveForward() == '-') {
 												if (S.eof()) break;
-												if (S.getAndMoveForward()=='>') break;
+												if (S.getAndMoveForward() == '>') break;
 												else {
 													S.moveBack();
 													S.moveBack();
