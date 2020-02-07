@@ -5,12 +5,22 @@ public class XMLLexer extends CommonLexer {
 	protected byte getNext() {
 		if (S.eof()) return EOF;
 		ST = S.getIndex();
-		if (S.get() == ' ' || S.get() == '\t') ReadSpaces();
+		ReadSpaces();
 		if (S.eof()) return EOF;
 		int q = S.getIndex();
 		d:
 		if (D[DS[0]] == TYPE_CONTENT_START) {
-			while ((!S.eof()) && S.get() != '<') S.moveForward();
+			while (true) {
+				char c = S.getAndMoveForward();
+				if (S.eof()) return TYPE_CONTENT;
+				if (c == '<') {
+					c = S.get();
+					if (c == '/') {
+						S.moveBack();
+						break;
+					}
+				}
+			}
 			if (S.eof()) return TYPE_CONTENT;
 			if (S.getIndex() == q) break d;
 			return TYPE_CONTENT;
@@ -20,14 +30,7 @@ public class XMLLexer extends CommonLexer {
 			ReadIdentifier();
 			return TYPE_IDENTIFIER;
 		}
-		char c = S.get();
-		S.moveForward();
-		if (S.ind == 4234) {
-			System.out.println(S);
-			System.out.println(S.ind);
-			System.out.println(S.length());
-		}
-		System.out.println(S.ind);
+		char c = S.getAndMoveForward();
 		char cur = S.eof() ? 0 : S.get();
 		switch (c) {
 			case '/':
@@ -87,12 +90,13 @@ public class XMLLexer extends CommonLexer {
 				}
 				return TYPE_TAG_START;
 			}
-			case '=':
+			/*case '=':
 			case '"':
-				S.moveBack();
-				return processSymbol(S.get());
+				return processSymbol(c);*/
+			default:
+				return processSymbol(c);
 		}
-		return TYPE_PURE;
+//		return TYPE_PURE;
 	}
 
 	@Override

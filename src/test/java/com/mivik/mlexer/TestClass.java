@@ -1,17 +1,31 @@
 package com.mivik.mlexer;
 
+import java.io.*;
 import java.util.Random;
 
 public class TestClass {
 	private static StringBuilder S = new StringBuilder("<!DOCTYPE html>\n" +
 			"<html>\n" +
 			"<head>\n" +
-			"</body>\n" +
+			"</head>\n" +
 			"</html>\n");
 	private static StringBuilderDocument doc = new StringBuilderDocument(S);
 	private static MLexer lexer;
 
 	public static void main(String[] args) {
+		try {
+			File f = new File("/home/mivik/index.html");
+			FileInputStream in = new FileInputStream(f);
+			BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+			S.setLength(0);
+			char[] buf = new char[512];
+			int read;
+			while ((read = reader.read(buf)) != -1) S.append(buf, 0, read);
+			reader.close();
+			in.close();
+		} catch (Throwable t) {
+			t.printStackTrace();
+		}
 		lexer = new XMLLexer();
 		lexer.setDocument(doc);
 		lexer.parseAll();
