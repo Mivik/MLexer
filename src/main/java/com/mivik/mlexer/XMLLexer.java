@@ -10,7 +10,7 @@ public class XMLLexer extends CommonLexer {
 		int q = S.getIndex();
 		d:
 		if (D[DS[0]] == TYPE_CONTENT_START) {
-			while (true) {
+			/*while (true) {
 				char c = S.getAndMoveForward();
 				if (S.eof()) return TYPE_CONTENT;
 				if (c == '<') {
@@ -20,7 +20,8 @@ public class XMLLexer extends CommonLexer {
 						break;
 					}
 				}
-			}
+			}*/
+			while ((!S.eof()) && S.get() != '<') S.moveForward();
 			if (S.eof()) return TYPE_CONTENT;
 			if (S.getIndex() == q) break d;
 			return TYPE_CONTENT;
