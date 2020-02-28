@@ -3,6 +3,7 @@ package com.mivik.mlexer;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public abstract class MLexer {
 	public static final int EXPAND_SIZE = 128;
@@ -88,8 +89,7 @@ public abstract class MLexer {
 		while (true) {
 			type = getNext();
 			if (type == EOF) break;
-			if (++DS[0] == D.length)
-				expandDArray();
+			ensureCapacity(++DS[0] + 1);
 			D[DS[0]] = type;
 			DS[DS[0]] = ST;
 			if (S.eof()) return;
@@ -104,7 +104,7 @@ public abstract class MLexer {
 		if (afterLen != 0) {
 			int cpLen = afterLen - i;
 			int nl = DS[0] + cpLen - 1;
-			while (D.length <= nl + 1) expandDArray();
+			ensureCapacity(nl + 1);
 			System.arraycopy(afterD, i, D, DS[0], cpLen);
 			System.arraycopy(afterDS, i, DS, DS[0], cpLen);
 			DS[0] = nl;
@@ -138,8 +138,7 @@ public abstract class MLexer {
 		while (true) {
 			type = getNext();
 			if (type == EOF) break;
-			if (++DS[0] == D.length)
-				expandDArray();
+			ensureCapacity(++DS[0] + 1);
 			D[DS[0]] = type;
 			DS[DS[0]] = ST;
 			if (S.eof()) return;
@@ -154,7 +153,7 @@ public abstract class MLexer {
 		if (afterLen != 0) {
 			int cpLen = afterLen - i;
 			int nl = DS[0] + cpLen - 1;
-			while (D.length <= nl + 1) expandDArray();
+			ensureCapacity(nl + 1);
 			System.arraycopy(afterD, i, D, DS[0], cpLen);
 			System.arraycopy(afterDS, i, DS, DS[0], cpLen);
 			DS[0] = nl;
@@ -216,14 +215,11 @@ public abstract class MLexer {
 		this.DS[0] = 0;
 	}
 
-	private void expandDArray() {
-		byte[] nd = new byte[D.length + EXPAND_SIZE];
-		System.arraycopy(D, 0, nd, 0, D.length);
-		D = nd;
-		int[] nd2 = new int[D.length];
-		System.arraycopy(DS, 0, nd2, 0, DS.length);
-		DS = nd2;
-		System.gc();
+	private void ensureCapacity(int tar) {
+		if (tar <= D.length) return;
+		tar = newCapacity(D.length, tar);
+		D = Arrays.copyOf(D, tar);
+		DS = Arrays.copyOf(DS, tar);
 	}
 
 	public void parseAll() {
@@ -233,11 +229,11 @@ public abstract class MLexer {
 		this.DS[0] = 0;
 		byte type;
 		while ((type = getNext()) != EOF) {
-			if (++DS[0] == D.length) expandDArray();
+			ensureCapacity(++DS[0] + 1);
 			D[DS[0]] = type;
 			DS[DS[0]] = ST;
 		}
-		if (DS[0] + 1 == D.length) expandDArray();
+		ensureCapacity(DS[0] + 1);
 		DS[DS[0] + 1] = S.length();
 		_Parsed = true;
 	}
@@ -323,6 +319,19 @@ public abstract class MLexer {
 	public final String[] queryKeywords(char[] cs, int st, int en) {
 		if (!(this instanceof CommonLexer)) return new String[0];
 		return ((CommonLexer) this).getKeywordTrie().queryWords(cs, st, en);
+	}
+
+	public static int newCapacity(int cur, int minCapacity) {
+		final int newCapacity = cur + (cur >> 1);
+		if (newCapacity - minCapacity <= 0) {
+			if (minCapacity < 0) throw new OutOfMemoryError();
+			else return minCapacity;
+		} else return newCapacity - 2147483639 <= 0 ? newCapacity : hugeCapacity(minCapacity);
+	}
+
+	private static int hugeCapacity(int minCapacity) {
+		if (minCapacity < 0) throw new OutOfMemoryError();
+		else return minCapacity > 2147483639 ? 2147483647 : 2147483639;
 	}
 
 	protected abstract byte getNext();
