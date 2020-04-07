@@ -14,7 +14,7 @@ public class TestClass {
 
 	public static void main(String[] args) {
 		try {
-			File f = new File("/home/mivik/index.html");
+			File f = new File("/home/mivik/test.smali");
 			FileInputStream in = new FileInputStream(f);
 			BufferedReader reader = new BufferedReader(new InputStreamReader(in));
 			S.setLength(0);
@@ -26,7 +26,7 @@ public class TestClass {
 		} catch (Throwable t) {
 			t.printStackTrace();
 		}
-		lexer = new XMLLexer();
+		lexer = new SmaliLexer();
 		lexer.setDocument(doc);
 		lexer.parseAll();
 		printState();
